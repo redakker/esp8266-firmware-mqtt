@@ -2,12 +2,39 @@
 A common firmware for ESP8266 chips, to handle mqtt events (send, receive)
 I use it to build a clever home.
 
-After download
-  - rename steup.h.sample to setup.h
-  - add value to variables 
-  - from the lib folder copy the files to the compiler (Arduino IDE) libraries folder
-and then you can compile it.
-  - modify the ESP.h and ESP.cpp to get the microcontorller voltage. Details in the beginig of mqtt_client.ino
+This firmware created in Arduino IDE. Use that to compile and upload to the microcontorller.
+
+Steps to make it work:
+
+  - download Arduino IDE, https://www.arduino.cc/en/main/software
+  - install boards width ESP8266 chip, http://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/
+  - open, the code (mqtt_client.ino)
+  - change the board (tool/Board/Generic ESP8266 Module)
+  - install library: PubSubClient (2.6.0)
+  - install library: ArduinoJson (5.11.1)
+  - install library: DHT sensor library (1.3.0)
+  - install library: Adafruit Unified Sensor (1.0.2)
+  
+  Search for ESP.cpp in the Arduino ide library: c:\Users\$USER\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266 
+  
+  
+  Modify ESP.cpp the files like:
+  ```
+  extern "C" uint16_t readvdd33(void);
+  uint16_t EspClass::getVdd33(void)
+  {
+  return readvdd33();
+  }
+  ```
+  
+  and ESP.h
+  
+  after 
+  "class EspClass {
+    public:" add
+  ```
+  uint16_t getVdd33(void); 
+  ```
 
 Help for some boards, devices
 
