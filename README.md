@@ -54,6 +54,12 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.11
+  - Web based Wifi configuration is ready
+  - firmware goes to soft AP mode if wifi credentials is not found in EEPROM
+  - sill missing to use devicename from config
+  - missing MQTT configuration from Web (no input fields)
+
 3.01 
   - web based microcontroller configuration
   - EEPROM handling with easy functions
