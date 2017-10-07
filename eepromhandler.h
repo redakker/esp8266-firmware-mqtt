@@ -26,7 +26,6 @@ class EEPROMHandler {
     bool save(JsonObject& json);
     void load();
     String getValueAsString(String name, bool loadbefore);
-    char getValueAsChar(String name, bool loadbefore);    
     int getValueAsInt(String name, bool loadbefore);
     void reset();
     void restart();

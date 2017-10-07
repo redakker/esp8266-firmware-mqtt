@@ -11,6 +11,7 @@
 #include <PubSubClient.h>
 #include <ESP8266WebServer.h>
 #include <EEPROM.h>
+#include <LinkedList.h>
 #include "eepromhandler.h"
 #include "button.cpp"
 #include "relay.cpp"
@@ -20,10 +21,11 @@
 #include "distance.cpp"
 #include "webserver.cpp"
 
-// Update these with values suitable for your network.
+// This linkedList for the scanned network APs. In normal mode does not need this.
+// https://github.com/ivanseidel/LinkedList
+LinkedList<String> networks = LinkedList<String>();
 
-const char* firmware = "3.01";
-String* networks;
+const char* firmware = "3.11";
 const char* mqtt_server = "";
 const char* mqtt_user = "";
 const char* mqtt_password = "";
@@ -31,12 +33,13 @@ const char* mqtt_password = "";
 const String room = "ROOOOOOOOOOOOOOOOOM";
 const String device = "DEVICEEEEEEEEEE";
 
-// Usally config should not be touched below this line
-// -------------------------------------------
 String commandIn = "/home/device/" + room + "/" + device + "/in";
 String commandOut = "/home/device/" + room + "/" + device + "/";
 const char* PING_IN_TOPIC = "/home/ping";
 const char* PING_OUT_TOPIC = "/home/pong";
+bool wifi_station_mode = false;
+// MQTT connect try
+int lasttry = 10000;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -88,30 +91,35 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void reconnect() {
   // Loop until we're reconnected
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    // Create a random client ID
-    String clientId = room + "/" + device + "-";
-    clientId += String(random(0xffff), HEX);
-    // Attempt to connect
-    if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
-      Serial.println("connected");
-      // Once connected, publish an announcement...
-      client.subscribe(commandIn.c_str());
-      client.subscribe(PING_IN_TOPIC);
-      led.operation(100,3);      
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
+  if (!client.connected()) {
+    // Wait 5 seconds before retrying
+    if (millis() - lasttry > 5000){
+      lasttry = millis();
+      Serial.print("Attempting MQTT connection...");
+      // Create a random client ID
+      String clientId = room + "/" + device + "-";
+      clientId += String(random(0xffff), HEX);
+      // Attempt to connect
+      if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
+        Serial.println("connected");
+        // Once connected, publish an announcement...
+        client.subscribe(commandIn.c_str());
+        client.subscribe(PING_IN_TOPIC);
+        led.operation(100,3);      
+      } else {
+        Serial.print("failed, rc=");
+        Serial.print(client.state());
+        Serial.println(" try again in 5 seconds");
+      }
     }
   }
 }
 
 // ##################### ARDUIONO setup() and loop()
 void setup() {
+  // Init serial
+  Serial.begin(115200);
+  
   // Help to erase EEPROM if something went wrong
   //eepromhandler.reset();
 
@@ -119,11 +127,7 @@ void setup() {
   //ESP.flashEraseSector(0x3fe);
 
   // Read EEPROM and set variables here first in objects as well
-  
   eepromhandler.load();
-
-  // Init serial
-  Serial.begin(115200);
 
   /******************************/
   // Call setup methods of objects
@@ -147,10 +151,7 @@ void setup() {
   // Distance sensor
   distance.setup(eepromhandler.getValueAsInt("trigger", false), eepromhandler.getValueAsInt("echo", false));
 
-  char* wifi_ssid = (char*)eepromhandler.getValueAsChar("ssid", false);
-  char* wifi_password = (char*)eepromhandler.getValueAsChar("wifipasswd", false);
-  
-  bool wifi_station_mode = setup_wifi(wifi_ssid, wifi_password, networks);
+  wifi_station_mode = setup_wifi(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
   if (wifi_station_mode) {
     Serial.println("Succesfully connected to the configured network. Wifi started as client mode.");
   } else {
@@ -159,14 +160,16 @@ void setup() {
 
   // Set up WebServer
   webserver.setup(wifi_station_mode, networks);
-  
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);  
+
+  if (wifi_station_mode){
+    client.setServer(mqtt_server, 1883);
+    client.setCallback(callback);  
+  }
 }
 
 void loop() {
 
-  if (!client.connected()) {
+  if (!client.connected() && wifi_station_mode) {
     reconnect();
   }
 
@@ -196,7 +199,9 @@ void loop() {
   webserver.loop();
   
   // MQTT loop
-  client.loop();
+  if (wifi_station_mode){
+    client.loop();
+  }
 }
 
 

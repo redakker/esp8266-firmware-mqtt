@@ -73,24 +73,27 @@ void EEPROMHandler::load(){
       String savedData = read_StringEE(0, 500);      
       splitString(savedData, DELIMITER, result);
 
-      root["device"] = result[0]; // [0]
-      root["room"] = result[1]; // [1]
-      root["button"] = result[2]; // [2]
-      root["btype"] = result[3]; // [3]
-      root["relay"] = result[4]; // [4]      
-      root["dht22"] = result[5]; // [5]
-      root["led"] = result[6]; // [6]
-      root["resist"] = result[7]; // [7]
-      root["rtype"] = result[8]; // [8]
-      root["interval"] = result[9]; // [9]
-      root["resistname"] = result[10]; // [10]
-      root["trigger"] = result[11]; // [11]
-      root["echo"] = result[12]; // [12]
-      root["ssid"] = result[13]; // [13]
-      root["wifipasswd"] = result[14]; // [14]
-      root["mqttbroker"] = result[15]; // [15]
-      root["mqttuser"] = result[16]; // [16]
-      root["mqttpw"] = result[17]; // [17]
+      this->root["device"] = result[0]; // [0]
+      this->root["room"] = result[1]; // [1]
+      this->root["button"] = result[2]; // [2]
+      this->root["btype"] = result[3]; // [3]
+      this->root["relay"] = result[4]; // [4]      
+      this->root["dht22"] = result[5]; // [5]
+      this->root["led"] = result[6]; // [6]
+      this->root["resist"] = result[7]; // [7]
+      this->root["rtype"] = result[8]; // [8]
+      this->root["interval"] = result[9]; // [9]
+      this->root["resistname"] = result[10]; // [10]
+      this->root["trigger"] = result[11]; // [11]
+      this->root["echo"] = result[12]; // [12]
+      this->root["ssid"] = result[13]; // [13]
+      this->root["wifipasswd"] = result[14]; // [14]
+      this->root["mqttbroker"] = result[15]; // [15]
+      this->root["mqttuser"] = result[16]; // [16]
+      this->root["mqttpw"] = result[17]; // [17]
+
+      Serial.println("EEPROM data");
+      root.printTo(Serial);
 }
 
 String EEPROMHandler::getValueAsString(String name, bool loadbefore) {
@@ -102,16 +105,6 @@ String EEPROMHandler::getValueAsString(String name, bool loadbefore) {
       
       //Serial.println("Get value as String.\nName: \"" + name + "\"\nvalue: \"" + value + "\"");      
       //Serial.println("Return value: " + value + "\n-------------");      
-      return value;
-}
-
-char EEPROMHandler::getValueAsChar(String name, bool loadbefore) {
-      if (loadbefore){
-        load();
-      }
-      
-      char value = root[name.c_str()].as<char>();
-      
       return value;
 }
 
@@ -197,7 +190,7 @@ boolean EEPROMHandler::IsNumeric(String str) {
       }
       return true;
 }
-
+//;;;;;;;;;;;;;rednet;unforgetable;;;;
 void EEPROMHandler::splitString(String text, char splitChar, String result[]) {
     int splitCount = countSplitCharacters(text, splitChar);    
     char buff[text.length()+1];
@@ -210,6 +203,10 @@ void EEPROMHandler::splitString(String text, char splitChar, String result[]) {
           if (buff[i] == splitChar){
             result[counter] = text.substring(from, i);
             result[counter].trim();            
+            //Serial.println("Values in EEPROM:");
+            //Serial.print(counter);
+            //Serial.print(": ");
+            //Serial.println(result[counter]);
             from = i+1;
             counter++;
           }

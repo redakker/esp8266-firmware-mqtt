@@ -9,19 +9,24 @@
  * password: no password
  */
 
-bool setup_wifi(char* ssid, char* password, String* networks) {
+bool setup_wifi(String str_ssid, String str_password) {
+  char* ssid = const_cast<char*>(str_ssid.c_str());
+  char* password = const_cast<char*>(str_password.c_str());
   int c = 0;
+  int tryCounter = 20;
   delay(10);
 
   // We start by connecting to a WiFi network id the given ssid's length is okay
-  if (sizeof(ssid) > 1){
+  if (strlen(ssid) != 0){
     Serial.println();
     Serial.print("Connecting to ");
-    Serial.println(ssid);
+    Serial.print(ssid);
+    Serial.print(" with password ");
+    Serial.print(password);
     WiFi.persistent(false);
     WiFi.begin(ssid, password);  
     
-    while ( c < 20 ) {
+    while ( c < tryCounter ) {
       if (WiFi.status() == WL_CONNECTED) { break;}
       delay(500);
       Serial.print(".");
@@ -29,11 +34,15 @@ bool setup_wifi(char* ssid, char* password, String* networks) {
     }
     Serial.println("");    
   }
+Serial.print("counter: ");
+Serial.println(c);
 
-  if (c == 20 && sizeof(ssid) > 1){
-    Serial.println("Wifi connection was unsuccesful. Setup acces point.");
+Serial.print("strlen: ");
+Serial.println(strlen(ssid));
+  if (c == tryCounter || strlen(ssid) == 0){
+    Serial.println("Wifi connection was unsuccesful. Setup access point.");
     WiFi.disconnect();
-    setupAP(networks);
+    setupAP();
     return false;
   } else {
     randomSeed(micros());
@@ -48,7 +57,7 @@ bool setup_wifi(char* ssid, char* password, String* networks) {
   }
 }
 
-void setupAP(String* networks) {  
+void setupAP() {  
   WiFi.mode(WIFI_AP_STA);
   //WiFi.disconnect();
   delay(100);
@@ -61,11 +70,9 @@ void setupAP(String* networks) {
     Serial.print(n);
     Serial.println(" networks found");
 
-    networks = new String[n];
-
+    //networks = new String*[n];
     
-    for (int i = 0; i < n; ++i)
-     {
+    for (int i = 0; i < n; ++i) {
       // Print SSID and RSSI for each network found
       Serial.print(i + 1);
       Serial.print(": ");
@@ -73,11 +80,24 @@ void setupAP(String* networks) {
       Serial.print(" (");
       Serial.print(WiFi.RSSI(i));
       Serial.print(")");
-      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
-      String ssid = String (WiFi.SSID(i) + (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? "": "*");
-      networks[i] = ssid;
+      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");      
+      String ssid = String (WiFi.SSID(i));
+      ssid += WiFi.encryptionType(i) == ENC_TYPE_NONE ? String(""): String("*");
+      //Serial.println(*ssid);
+      networks.add(ssid);
+      
       delay(10);
      }
+     Serial.println("----------------------------------");
+
+     for (int i = 0; i < n; ++i) {
+     //Serial.println(*networks[i]);
+     }
+
+     Serial.println("Network size: ");
+     Serial.println(sizeof(networks));
+     Serial.println(sizeof(String));
+     Serial.println(n);
   }
   Serial.println("");  
   delay(100);
