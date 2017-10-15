@@ -32,15 +32,15 @@ class Distance {
     char jsonChar[500];
     
   public:    
-    Distance(PubSubClient& client, EEPROMHandler& eepromhandler, String commandOut){
+    Distance(PubSubClient& client, EEPROMHandler& eepromhandler){
       clnt = &client;
-      this->eepromhandler = &eepromhandler;
-      this->commandOut = commandOut;     
+      this->eepromhandler = &eepromhandler;      
     }
     
-    void setup(int triggerPin, int echoPin) {
+    void setup(int triggerPin, int echoPin, String commandOut) {
       this->triggerPin = triggerPin;
       this->echoPin = echoPin;
+      this->commandOut = commandOut;
      
       Serial.print("Distance setup pin:\nTrigger: ");      
       Serial.println(this->triggerPin);

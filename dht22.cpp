@@ -20,14 +20,15 @@ class DHT_22 {
         
     
   public:    
-    DHT_22(PubSubClient& client, EEPROMHandler& eepromhandler, String commandOut){       
+    DHT_22(PubSubClient& client, EEPROMHandler& eepromhandler){       
        clnt = &client;
        this->eepromhandler = &eepromhandler;
-       this->commandOut = commandOut;       
+             
     }
 
-    void setup(int pin) {
+    void setup(int pin, String commandOut) {
       this->pin = pin;
+       this->commandOut = commandOut;
 
       Serial.print("DHT22 setup pin: ");
       Serial.println(this->pin);      

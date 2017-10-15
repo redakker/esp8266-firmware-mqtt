@@ -72,6 +72,8 @@ void EEPROMHandler::load(){
       String result[MAX_RESULT_NUMBER];      
       String savedData = read_StringEE(0, 500);      
       splitString(savedData, DELIMITER, result);
+      jsonBuffer.clear();
+      JsonObject& root = jsonBuffer.createObject();
 
       this->root["device"] = result[0]; // [0]
       this->root["room"] = result[1]; // [1]

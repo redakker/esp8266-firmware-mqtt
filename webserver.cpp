@@ -106,8 +106,9 @@ class WebServer {
                 
                 eepromhandler->save(root);
               }
-  
+              
               eepromhandler->load();
+              
               
               // Always send the same conent with an updated data in it
               content =  "<!DOCTYPE HTML><html>\r\n";
@@ -146,7 +147,56 @@ class WebServer {
               content += eepromhandler->getValueAsString("room", false);
               content += "\">\r\n";
               content += "      </div>\r\n";
-              content += " </div>\r\n";         
+              content += " </div>\r\n";
+              
+              content += "    <hr />\r\n";
+              content += "    <h2>Network configuration</h2>\r\n";
+
+              content += "    <div class=\"form-group\">\r\n";
+              content += "      <label for=\"ssid\" class=\"col-sm-3 control-label\">SSID</label>\r\n";
+              content += "      <div class=\"col-sm-9\">\r\n";
+              content += "        <input name=\"ssid\" type=\"text\" id=\"ssid\" placeholder=\"wireless SSID\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("ssid", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+
+              content += "    <div class=\"form-group\">\r\n";
+              content += "      <label for=\"wifipasswd\" class=\"col-sm-3 control-label\">WIFI password</label>\r\n";
+              content += "      <div class=\"col-sm-9\">\r\n";
+              content += "        <input name=\"wifipasswd\" type=\"password\" id=\"wifipasswd\" placeholder=\"wireless password\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("wifipasswd", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+
+              content += "    <div class=\"form-group\">\r\n";
+              content += "      <label for=\"mqttbroker\" class=\"col-sm-3 control-label\">MQTT broker</label>\r\n";
+              content += "      <div class=\"col-sm-9\">\r\n";
+              content += "        <input name=\"mqttbroker\" type=\"text\" id=\"mqttbroker\" placeholder=\"MQTT broker address\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("mqttbroker", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+
+              content += "    <div class=\"form-group\">\r\n";
+              content += "      <label for=\"mqttuser\" class=\"col-sm-3 control-label\">MQTT user</label>\r\n";
+              content += "      <div class=\"col-sm-9\">\r\n";
+              content += "        <input name=\"mqttuser\" type=\"text\" id=\"mqttuser\" placeholder=\"MQTT broker user\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("mqttuser", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+
+              content += "    <div class=\"form-group\">\r\n";
+              content += "      <label for=\"mqttpw\" class=\"col-sm-3 control-label\">MQTT password</label>\r\n";
+              content += "      <div class=\"col-sm-9\">\r\n";
+              content += "        <input name=\"mqttpw\" type=\"password\" id=\"mqttpw\" placeholder=\"MQTT broker password\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("mqttpw", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+                       
               content += "    <hr />\r\n";
               content += "    <h2>Pin configuration</h2>\r\n";
               content += "    <span class=\"help-block\">pin of the devices (-1 means that device is not available in this device)</span>\r\n";

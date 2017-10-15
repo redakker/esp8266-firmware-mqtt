@@ -19,16 +19,16 @@ class Resist {
     char jsonChar[500];        
     
   public:    
-    Resist(PubSubClient& client, EEPROMHandler& eepromhandler, String commandOut){       
+    Resist(PubSubClient& client, EEPROMHandler& eepromhandler){       
        clnt = &client;
-       this->eepromhandler = &eepromhandler;
-       this->commandOut = commandOut;       
+       this->eepromhandler = &eepromhandler;       
     }
 
-    void setup(String name, int pin, String type) {
+    void setup(String name, int pin, String type, String commandOut) {
       this->pin = pin;
       this->type = type;
       this->name = name;
+      this->commandOut = commandOut;
 
       Serial.print("Resist setup pin: ");
       Serial.print(this->pin);

@@ -18,10 +18,10 @@ class Button {
     
   public:
     
-    Button(PubSubClient& client, EEPROMHandler& eepromhandler, String commandOut){
+    Button(PubSubClient& client, EEPROMHandler& eepromhandler){
        clnt = &client;
        this->eepromhandler = &eepromhandler;       
-       this->commandOut = commandOut;       
+              
     }
 
     /*
@@ -29,9 +29,10 @@ class Button {
      * - stateful: event comes in both states. We must know the actual state
      * - stateless: event comes just when the button pushed. Send once when the button pushed and don't store the state
     */
-    void setup(int pin, String type) {
+    void setup(int pin, String type, String commandOut) {
       this->pin = pin;
       this->type = type;
+      this->commandOut = commandOut;
 
       Serial.print("Button setup pin: ");
       Serial.print(this->pin);

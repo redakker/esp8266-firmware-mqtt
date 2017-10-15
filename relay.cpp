@@ -15,13 +15,13 @@ class Relay {
     
     
   public:    
-    Relay(EEPROMHandler& eepromhandler, String commandIn){       
-       this->eepromhandler = &eepromhandler;
-       this->commandIn = commandIn;
+    Relay(EEPROMHandler& eepromhandler){       
+       this->eepromhandler = &eepromhandler;       
     }
 
-    void setup(int pin) {
+    void setup(int pin, String commandIn) {
       this->pin = pin;
+      this->commandIn = commandIn;
       Serial.print("Relay setup pin: ");      
       Serial.println(this->pin);
       

@@ -25,16 +25,15 @@
 // https://github.com/ivanseidel/LinkedList
 LinkedList<String> networks = LinkedList<String>();
 
-const char* firmware = "3.11";
-const char* mqtt_server = "";
-const char* mqtt_user = "";
-const char* mqtt_password = "";
+const char* firmware = "3.21";
+String mqtt_server = "";
+String mqtt_user = "";
+String mqtt_password = "";
+String room = "";
+String device = "";
+String commandIn = "";
+String commandOut = "";
 
-const String room = "ROOOOOOOOOOOOOOOOOM";
-const String device = "DEVICEEEEEEEEEE";
-
-String commandIn = "/home/device/" + room + "/" + device + "/in";
-String commandOut = "/home/device/" + room + "/" + device + "/";
 const char* PING_IN_TOPIC = "/home/ping";
 const char* PING_OUT_TOPIC = "/home/pong";
 bool wifi_station_mode = false;
@@ -47,12 +46,12 @@ ESP8266WebServer server(80);
 
 // Create Objects
 EEPROMHandler eepromhandler;
-Button button(client, eepromhandler, commandOut);
-Relay relay(eepromhandler, commandIn);
+Button button(client, eepromhandler);
+Relay relay(eepromhandler);
 Led led;
-DHT_22 dht_22(client, eepromhandler, commandOut);
-Resist resist(client, eepromhandler, commandOut);
-Distance distance(client, eepromhandler, commandOut);
+DHT_22 dht_22(client, eepromhandler);
+Resist resist(client, eepromhandler);
+Distance distance(client, eepromhandler);
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -96,11 +95,21 @@ void reconnect() {
     if (millis() - lasttry > 5000){
       lasttry = millis();
       Serial.print("Attempting MQTT connection...");
+      Serial.print(" server: ");
+      Serial.print(mqtt_server);
+      Serial.print(" user: ");
+      Serial.print(mqtt_user);
+      //Serial.print(" pass: ");
+      //Serial.print(mqtt_password);
+
+      const char* mqtt_u = const_cast<char*>(mqtt_user.c_str());
+      const char* mqtt_p = const_cast<char*>(mqtt_password.c_str());
+      
       // Create a random client ID
       String clientId = room + "/" + device + "-";
       clientId += String(random(0xffff), HEX);
       // Attempt to connect
-      if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
+      if (client.connect(clientId.c_str(), mqtt_u, mqtt_p)) {
         Serial.println("connected");
         // Once connected, publish an announcement...
         client.subscribe(commandIn.c_str());
@@ -130,26 +139,36 @@ void setup() {
   eepromhandler.load();
 
   /******************************/
+  // Set up variables
+  /******************************/
+
+  room = eepromhandler.getValueAsString("room", false);
+  device = eepromhandler.getValueAsString("device", false);
+  
+  commandIn = "/home/device/" + room + "/" + device + "/in";
+  commandOut = "/home/device/" + room + "/" + device + "/";
+
+  /******************************/
   // Call setup methods of objects
   /******************************/
 
   // BUTTON
-  button.setup(eepromhandler.getValueAsInt("button", false), eepromhandler.getValueAsString("btype", false));
+  button.setup(eepromhandler.getValueAsInt("button", false), eepromhandler.getValueAsString("btype", false), commandOut);
 
   // RELAY
-  relay.setup(eepromhandler.getValueAsInt("relay", false));
+  relay.setup(eepromhandler.getValueAsInt("relay", false), commandIn);
 
   // LED
   led.setup(eepromhandler.getValueAsInt("led", false));
 
   // DHT22 sensor
-  dht_22.setup(eepromhandler.getValueAsInt("dht22", false));
+  dht_22.setup(eepromhandler.getValueAsInt("dht22", false), commandOut);
 
   // Resist type sensor (rain, moisture etc.)
-  resist.setup(eepromhandler.getValueAsString("resistname", false), eepromhandler.getValueAsInt("resist", false), eepromhandler.getValueAsString("rtype", false));
+  resist.setup(eepromhandler.getValueAsString("resistname", false), eepromhandler.getValueAsInt("resist", false), eepromhandler.getValueAsString("rtype", false), commandOut);
 
   // Distance sensor
-  distance.setup(eepromhandler.getValueAsInt("trigger", false), eepromhandler.getValueAsInt("echo", false));
+  distance.setup(eepromhandler.getValueAsInt("trigger", false), eepromhandler.getValueAsInt("echo", false), commandOut);
 
   wifi_station_mode = setup_wifi(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
   if (wifi_station_mode) {
@@ -162,7 +181,15 @@ void setup() {
   webserver.setup(wifi_station_mode, networks);
 
   if (wifi_station_mode){
-    client.setServer(mqtt_server, 1883);
+
+    // Set the server, user and passwor from EEPROM
+    mqtt_server = eepromhandler.getValueAsString("mqttbroker", false);
+    mqtt_user = eepromhandler.getValueAsString("mqttuser", false);
+    mqtt_password = eepromhandler.getValueAsString("mqttpw", false);
+
+    const char* mqtt_s = const_cast<char*>(mqtt_server.c_str());    
+   
+    client.setServer(mqtt_s, 1883);
     client.setCallback(callback);  
   }
 }
