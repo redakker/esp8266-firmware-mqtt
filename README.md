@@ -3,6 +3,17 @@ A common firmware for ESP8266 chips, to handle mqtt events (send, receive)
 I use it to build a clever home.
 
 This firmware created in Arduino IDE. Use that to compile and upload to the microcontorller.
+It has own web config userinterface.
+Steps to config the application:
+  - upload a firmware to the board
+  - it starts in AP mode. Search for ESP_AP_nopw_ip_192_168_1_1 (no password, ip: 192.168.1.1)
+  - choose you wifi and type the password, press submit
+  - reboot the board
+  - it should run in normal (station) mode
+  - get the device IP from your router
+  - set the config
+  - reboot the board
+  - have fun
 
 Steps to make it work:
 
@@ -54,6 +65,11 @@ digital pin: 14 (not tried)
 
 
 Release notes:
+
+3.21
+  - input fields added to the web config (wifi, mqtt)
+  - every config comes from EEPROM
+  - nice to have: meake it more secure (passwords visible in the URL and input value with firebug)
 
 3.11
   - Web based Wifi configuration is ready
