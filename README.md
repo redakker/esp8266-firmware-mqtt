@@ -69,12 +69,12 @@ Release notes:
 3.21
   - input fields added to the web config (wifi, mqtt)
   - every config comes from EEPROM
-  - nice to have: meake it more secure (passwords visible in the URL and input value with firebug)
+  - nice to have: make it more secure (passwords visible in the URL and input value with firebug)
 
 3.11
   - Web based Wifi configuration is ready
   - firmware goes to soft AP mode if wifi credentials is not found in EEPROM
-  - sill missing to use devicename from config
+  - still missing to use devicename from config
   - missing MQTT configuration from Web (no input fields)
 
 3.01 
@@ -87,7 +87,7 @@ Release notes:
   TODO: 
   - If user configure not allowed pins (not investigated deeply), the microcontorller crash (not damage)
   Prevent the misconfiguration.
-  - use the configuration for room and device name (forget tom implement :))
+  - use the configuration for room and device name (forget to implement :))
 
 2.11
   - new objects created for different sensors
