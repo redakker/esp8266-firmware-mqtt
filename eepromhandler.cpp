@@ -67,6 +67,12 @@ bool EEPROMHandler::save(JsonObject& json){
         
 }
 
+bool EEPROMHandler::updateProperty(String property, String value){        
+      load();
+      this->root[property] = value;
+      return save(this->root); 
+}
+
 // This method should call before every getParameter() call to get the update config from eeprom
 void EEPROMHandler::load(){
       String result[MAX_RESULT_NUMBER];      

@@ -43,16 +43,15 @@ class Button {
         pinMode(pin, INPUT);      
         lastvalue = "";
         Serial.println("Button setup ready");
+        root["device"] = eepromhandler->getValueAsString("device", true);
+        root["type"] = "button";
+        root["pin"] = pin;
       }
     }
 
     void loop() {
       if (pin > -1){   
         boolean buttonState = digitalRead(pin);
-        root["device"] = eepromhandler->getValueAsString("device", true);
-        root["type"] = "button";
-        root["pin"] = pin;
-        
         if (type == "stateful"){
           root["buttontype"] = "stateful";    
           if (buttonState == HIGH && lastvalue != "HIGH") {
@@ -61,7 +60,7 @@ class Button {
             root["value"] = "1";
             root.printTo((char*)jsonChar, root.measureLength() + 1);
             clnt->publish(commandOut.c_str(), jsonChar);
-            Serial.println("Send button state 0");
+            Serial.println("Send button state 1");
           }
         
           if (buttonState == LOW && lastvalue != "LOW") {

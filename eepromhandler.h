@@ -24,6 +24,7 @@ class EEPROMHandler {
 	  ~EEPROMHandler();
 
     bool save(JsonObject& json);
+	bool updateProperty(String property, String value);
     void load();
     String getValueAsString(String name, bool loadbefore);
     int getValueAsInt(String name, bool loadbefore);

@@ -38,6 +38,8 @@ class DHT_22 {
         dht->begin();
         lastSend = 0;
         Serial.println("DHT22 setup ready");
+        root["device"] = eepromhandler->getValueAsString("device", false);
+        root["type"] = "dht22"; 
       }
     }
 
@@ -45,9 +47,7 @@ class DHT_22 {
       if (pin > -1){
         //Serial.println("loop DHT22");
         if (millis() - lastSend > eepromhandler->getValueAsInt("interval", true)){
-          lastSend = millis();
-          root["device"] = eepromhandler->getValueAsString("device", false);
-          root["type"] = "dht22";          
+          lastSend = millis();                   
           humidity = dht->readHumidity();
           temperature = dht->readTemperature();
           root["temperature"] = temperature;

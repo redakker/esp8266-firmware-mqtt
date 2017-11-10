@@ -48,7 +48,8 @@ class Distance {
       Serial.println(this->echoPin);
 
       if (triggerPin > -1 && echoPin > -1){
-        Serial.println("Distance setup ready");
+        root["device"] = eepromhandler->getValueAsString("device", true);
+        Serial.println("Distance setup ready");        
       }
       
     }
@@ -80,7 +81,7 @@ class Distance {
             inches = microsecondsToInches(duration);
             cm = microsecondsToCentimeters(duration);
   
-            root["device"] = eepromhandler->getValueAsString("device", true);
+            
             root["type"] = "distance";                    
             root["cm"] = cm;
             root["inch"] = inches;

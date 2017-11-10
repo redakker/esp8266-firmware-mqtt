@@ -41,6 +41,7 @@ class Resist {
         if (type == "digital"){
           pinMode(pin, INPUT); 
         }
+        root["device"] = eepromhandler->getValueAsString("device", false);
       }
     }
 
@@ -48,7 +49,6 @@ class Resist {
       if (pin > -1){       
         if (millis() - lastSend > eepromhandler->getValueAsInt("interval", true)){
           lastSend = millis();          
-          root["device"] = eepromhandler->getValueAsString("device", false);
           root["type"] = name;
           root["analogdigital"] = type;
 
