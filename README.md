@@ -66,6 +66,12 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.51
+  - OLED object implemented
+  - Tested with this kind of oled module: 0.96" I2C IIC Serial 128X64 128x64 White
+  - Object has an AddText() method which displays the given text with a right format. You should
+  - Currently displays just the special MQTT messages which was sent directly to the display: "/home/device/{room}/{device}/in/text"
+
 3.40
   - eeprom handler can update just one property instead of rewrite the whole data structure (method implemented, but not used yet)
   - eeprom reading moved from loop() functions to setup(). Use the EEPROM as less as we can. If user change the config (s)he must reboot the board to apply the new values
