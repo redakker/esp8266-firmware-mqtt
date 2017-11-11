@@ -17,6 +17,7 @@ class DHT_22 {
     StaticJsonBuffer<500> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
     char jsonChar[500];
+    int interval = 0;
         
     
   public:    
@@ -28,7 +29,7 @@ class DHT_22 {
 
     void setup(int pin, String commandOut) {
       this->pin = pin;
-       this->commandOut = commandOut;
+      this->commandOut = commandOut;
 
       Serial.print("DHT22 setup pin: ");
       Serial.println(this->pin);      
@@ -39,14 +40,15 @@ class DHT_22 {
         lastSend = 0;
         Serial.println("DHT22 setup ready");
         root["device"] = eepromhandler->getValueAsString("device", false);
-        root["type"] = "dht22"; 
+        root["type"] = "dht22";
+        this->interval = eepromhandler->getValueAsInt("interval", false);        
       }
     }
 
     void loop() {
       if (pin > -1){
         //Serial.println("loop DHT22");
-        if (millis() - lastSend > eepromhandler->getValueAsInt("interval", true)){
+        if (millis() - lastSend > interval){
           lastSend = millis();                   
           humidity = dht->readHumidity();
           temperature = dht->readTemperature();

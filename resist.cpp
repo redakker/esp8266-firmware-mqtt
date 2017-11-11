@@ -16,7 +16,8 @@ class Resist {
     unsigned long lastSend;
     StaticJsonBuffer<500> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
-    char jsonChar[500];        
+    char jsonChar[500];
+    int interval = 0 ;
     
   public:    
     Resist(PubSubClient& client, EEPROMHandler& eepromhandler){       
@@ -42,12 +43,13 @@ class Resist {
           pinMode(pin, INPUT); 
         }
         root["device"] = eepromhandler->getValueAsString("device", false);
+        this->interval = eepromhandler->getValueAsInt("interval", false);
       }
     }
 
     void loop() {
       if (pin > -1){       
-        if (millis() - lastSend > eepromhandler->getValueAsInt("interval", true)){
+        if (millis() - lastSend > interval){
           lastSend = millis();          
           root["type"] = name;
           root["analogdigital"] = type;

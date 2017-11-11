@@ -30,6 +30,7 @@ class Distance {
     StaticJsonBuffer<500> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
     char jsonChar[500];
+    int interval = 0;
     
   public:    
     Distance(PubSubClient& client, EEPROMHandler& eepromhandler){
@@ -48,7 +49,8 @@ class Distance {
       Serial.println(this->echoPin);
 
       if (triggerPin > -1 && echoPin > -1){
-        root["device"] = eepromhandler->getValueAsString("device", true);
+        root["device"] = eepromhandler->getValueAsString("device", false);
+        this->interval = eepromhandler->getValueAsInt("interval", false);
         Serial.println("Distance setup ready");        
       }
       
@@ -56,7 +58,7 @@ class Distance {
     void loop() {
 
       if (triggerPin > -1 && echoPin > -1){
-        if (millis() - lastSend > eepromhandler->getValueAsInt("interval", true)){
+        if (millis() - lastSend > interval){
             lastSend = millis();
             // establish variables for duration of the ping, 
             // and the distance result in inches and centimeters:
