@@ -19,13 +19,14 @@
 #include "dht22.cpp"
 #include "resist.cpp"
 #include "distance.cpp"
+#include "display.cpp"
 #include "webserver.cpp"
 
 // This linkedList for the scanned network APs. In normal mode does not need this.
 // https://github.com/ivanseidel/LinkedList
 LinkedList<String> networks = LinkedList<String>();
 
-const char* firmware = "3.40";
+const char* firmware = "3.51";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
@@ -52,6 +53,7 @@ Led led;
 DHT_22 dht_22(client, eepromhandler);
 Resist resist(client, eepromhandler);
 Distance distance(client, eepromhandler);
+Display display;
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -63,11 +65,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // https://github.com/bblanchon/ArduinoJson
   //####################################################################
 
+  String payload_str = "";
+
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
   for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
+    payload_str+=(char)payload[i];
   }
   Serial.println();
 
@@ -76,7 +81,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   /******************************************/
 
   // RELAY
-  relay.trigger(topic, payload);
+  relay.trigger(topic, payload_str);
+
+  // Display
+  display.trigger(topic, payload_str);
 
   // PING BEGIN
   /// Every device listen a special topic. If it gets this topic, it sends a messgae about its status (MAC, name etc.)
@@ -110,11 +118,15 @@ void reconnect() {
       clientId += String(random(0xffff), HEX);
       // Attempt to connect
       if (client.connect(clientId.c_str(), mqtt_u, mqtt_p)) {
-        Serial.println("connected");
+        Serial.println(" connected");
         // Once connected, publish an announcement...
         client.subscribe(commandIn.c_str());
         client.subscribe(PING_IN_TOPIC);
-        led.operation(100,3);      
+        
+        Serial.println("Subsribed topics:");
+        Serial.println(commandIn.c_str());
+        Serial.println(PING_IN_TOPIC);
+        //led.operation(100,3);      
       } else {
         Serial.print("failed, rc=");
         Serial.print(client.state());
@@ -145,7 +157,7 @@ void setup() {
   room = eepromhandler.getValueAsString("room", false);
   device = eepromhandler.getValueAsString("device", false);
   
-  commandIn = "/home/device/" + room + "/" + device + "/in";
+  commandIn = "/home/device/" + room + "/" + device + "/in/#";
   commandOut = "/home/device/" + room + "/" + device + "/";
 
   /******************************/
@@ -169,6 +181,11 @@ void setup() {
 
   // Distance sensor
   distance.setup(eepromhandler.getValueAsInt("trigger", false), eepromhandler.getValueAsInt("echo", false), commandOut);
+
+  // Display
+  int PIN_SDA = eepromhandler.getValueAsInt("sda", false);
+  int PIN_SDC = eepromhandler.getValueAsInt("sdc", false); 
+  display.setup(PIN_SDA, PIN_SDC, commandIn);
 
   wifi_station_mode = setup_wifi(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
   if (wifi_station_mode) {
@@ -221,6 +238,9 @@ void loop() {
 
   // Distancesensor
   distance.loop();
+
+  // Display
+  display.loop();
   
   // WebServer
   webserver.loop();

@@ -60,6 +60,10 @@ bool EEPROMHandler::save(JsonObject& json){
                 data+= DELIMITER;
                 data+= json["mqttpw"].as<String>(); // [17]
                 data+= DELIMITER;
+                data+= json["sda"].as<String>(); // [16]
+                data+= DELIMITER;
+                data+= json["sdc"].as<String>(); // [17]
+                data+= DELIMITER;
                 
                 Serial.print("Data to save to EEPROM: ");
                 Serial.println(data);
@@ -99,6 +103,8 @@ void EEPROMHandler::load(){
       this->root["mqttbroker"] = result[15]; // [15]
       this->root["mqttuser"] = result[16]; // [16]
       this->root["mqttpw"] = result[17]; // [17]
+      this->root["sda"] = result[18]; // [18]
+      this->root["sdc"] = result[19]; // [19]
 
       Serial.println("EEPROM data");
       root.printTo(Serial);

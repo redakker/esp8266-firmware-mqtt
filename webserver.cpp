@@ -81,6 +81,8 @@ class WebServer {
               String mqttbroker = server->arg("mqttbroker") == NULL ? "" : server->arg("mqttbroker");
               String mqttuser = server->arg("mqttuser") == NULL ? "" : server->arg("mqttuser");
               String mqttpw = server->arg("mqttpw") == NULL ? "" : server->arg("mqttpw");
+              String sda = server->arg("sda") == NULL ? "" : server->arg("sda");
+              String sdc = server->arg("sdc") == NULL ? "" : server->arg("sdc");
               
   
               if (action == "updatesettings") {
@@ -103,6 +105,8 @@ class WebServer {
                 root["mqttbroker"] = mqttbroker;
                 root["mqttuser"] = mqttuser;
                 root["mqttpw"] = mqttpw;
+                root["sda"] = sda;
+                root["sdc"] = sdc;
                 
                 eepromhandler->save(root);
               }
@@ -230,6 +234,21 @@ class WebServer {
               content += "      <div class=\"col-sm-3\">\r\n";
               content += "        <input name=\"echo\" type=\"text\" id=\"echo\" placeholder=\"pin of the echo\" class=\"form-control\" value=\"";
               content += eepromhandler->getValueAsString("echo", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+
+              content += "    <div class=\"form-group form-inline\">\r\n";
+              content += "      <label for=\"sda\" class=\"col-sm-3 control-label\">Display SDA</label>\r\n";
+              content += "      <div class=\"col-sm-3\">\r\n";
+              content += "        <input name=\"sda\" type=\"text\" id=\"sda\" placeholder=\"pin of the display sda\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("sda", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "      <label for=\"sdc\" class=\"col-sm-3 control-label\">Display SDC/SCL</label>\r\n";
+              content += "      <div class=\"col-sm-3\">\r\n";
+              content += "        <input name=\"sdc\" type=\"text\" id=\"sdc\" placeholder=\"pin of the display sdc/scl\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("sdc", false);
               content += "\">\r\n";
               content += "      </div>\r\n";
               content += "    </div>\r\n";

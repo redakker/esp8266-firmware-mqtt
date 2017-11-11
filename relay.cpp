@@ -38,11 +38,11 @@ class Relay {
       }
     }
 
-    void trigger(char* topic, byte* payload){
+    void trigger(char* topic, String payload){
       if (pin > -1){
         String topic_str = String(topic);
         if (topic_str == commandIn) {
-          if ((char)payload[0] == '1') {
+          if (payload == "1") {
             digitalWrite(pin, HIGH);
             //operation(100, 4);
           } else {
