@@ -3,11 +3,12 @@
 #include <Wire.h>  
 #include "SSD1306.h" //https://github.com/squix78/esp8266-oled-ssd1306
 #include <LinkedList.h>
+#include "font.h"
 
 class Display {
 
-    const int DISPLAY_MAX_LINES = 5;
-    const int DISPLAY_MAX_COLUMNS = 20;
+    const int DISPLAY_MAX_LINES = 9;
+    const int DISPLAY_MAX_COLUMNS = 40;
     int pin_sda = -1;
     int pin_sdc = -1;
     SSD1306* display = NULL;
@@ -28,7 +29,7 @@ class Display {
       // Initialising the UI will init the display too.
       display->init();    
       display->flipScreenVertically();
-      display->setFont(ArialMT_Plain_10);
+      display->setFont(Monospaced_plain_5);
       this->commandIn = commandIn;
     }
 
