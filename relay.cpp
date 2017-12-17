@@ -22,6 +22,7 @@ class Relay {
     void setup(int pin, String commandIn) {
       this->pin = pin;
       this->commandIn = commandIn;
+      this->commandIn.replace("#", "");
       Serial.print("Relay setup pin: ");      
       Serial.println(this->pin);
       

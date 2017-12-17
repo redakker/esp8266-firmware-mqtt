@@ -89,15 +89,6 @@ void setupAP() {
       delay(10);
      }
      Serial.println("----------------------------------");
-
-     for (int i = 0; i < n; ++i) {
-     //Serial.println(*networks[i]);
-     }
-
-     Serial.println("Network size: ");
-     Serial.println(sizeof(networks));
-     Serial.println(sizeof(String));
-     Serial.println(n);
   }
   Serial.println("");  
   delay(100);

@@ -7,13 +7,14 @@
 
 class Display {
 
-    const int DISPLAY_MAX_LINES = 9;
-    const int DISPLAY_MAX_COLUMNS = 40;
+    const int DISPLAY_MAX_LINES = 6;
+    const int DISPLAY_MAX_COLUMNS = 20;
     int pin_sda = -1;
     int pin_sdc = -1;
     SSD1306* display = NULL;
     LinkedList<String> lines = LinkedList<String>();
     String commandIn = "";
+    bool textchanged = false;
     
   public:    
     Display(){
@@ -35,22 +36,25 @@ class Display {
 
     void loop() {
       if (this->pin_sda > -1 && this->pin_sdc > -1 ){
-        display->clear();
-        
-        display->setTextAlignment(TEXT_ALIGN_LEFT);
-        for (int i = 0; i < this->lines.size(); i++){
-            String line = this->lines.get(i);
-            display->setFont(ArialMT_Plain_10);
-            display->drawString(0, i*10, line);  
+        // Should not draw the same text every loop
+        if (textchanged){
+          display->clear();
+          
+          display->setTextAlignment(TEXT_ALIGN_LEFT);
+          for (int i = 0; i < this->lines.size(); i++){
+              String line = this->lines.get(i);
+              display->setFont(ArialMT_Plain_10);
+              display->drawString(0, i*10, line);  
+          }
+          // write the buffer to the display
+          
+          display->display();              
         }
-        // write the buffer to the display
-        
-        display->display();              
       }
     }
 
     void displayText(String text){
-      if (text.length() > DISPLAY_MAX_COLUMNS) {
+      if (text.length() >= DISPLAY_MAX_COLUMNS) {
         for (int i = 0; i <= text.length() / DISPLAY_MAX_COLUMNS; i++) {
           addLine(text.substring(i * DISPLAY_MAX_COLUMNS, (i + 1) * DISPLAY_MAX_COLUMNS));
         }
@@ -81,9 +85,10 @@ class Display {
     */
 
     void addLine(String text) {
-      if (lines.size() > DISPLAY_MAX_LINES){
+      if (lines.size() >= DISPLAY_MAX_LINES){
         lines.remove(0);
       }
       this->lines.add(text);
+      textchanged = true;
     }
 };

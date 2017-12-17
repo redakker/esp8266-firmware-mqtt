@@ -61,6 +61,7 @@ class Button {
             root.printTo((char*)jsonChar, root.measureLength() + 1);
             clnt->publish(commandOut.c_str(), jsonChar);
             Serial.println("Send button state 1");
+            delay(10);
           }
         
           if (buttonState == LOW && lastvalue != "LOW") {
@@ -70,19 +71,21 @@ class Button {
             root.printTo((char*)jsonChar, root.measureLength() + 1);
             clnt->publish(commandOut.c_str(), jsonChar);
             Serial.println("Send button state 0");
+            delay(10);
           }
         }
   
         // In this case send a message just when the button was pushed
         if (type == "stateless"){
-          if (buttonState == LOW && lastvalue != "LOW") {
-              lastvalue = "LOW";
+          if (buttonState == LOW) {
+              while (!digitalRead(this->pin)) {}
               Serial.println("Button pushed");
               root["buttontype"] = "stateless";
               root["value"] = "1";
               root.printTo((char*)jsonChar, root.measureLength() + 1);            
-              clnt->publish(commandOut.c_str(), jsonChar, true);
+              clnt->publish(commandOut.c_str(), jsonChar, false);
               Serial.println("Send state 1");          
+              delay(10);
           }    
         }
       }

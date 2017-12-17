@@ -26,7 +26,7 @@
 // https://github.com/ivanseidel/LinkedList
 LinkedList<String> networks = LinkedList<String>();
 
-const char* firmware = "3.51";
+const char* firmware = "3.53";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
