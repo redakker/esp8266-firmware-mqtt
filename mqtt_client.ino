@@ -21,12 +21,13 @@
 #include "distance.cpp"
 #include "display.cpp"
 #include "webserver.cpp"
+#include "motion.cpp"
 
 // This linkedList for the scanned network APs. In normal mode does not need this.
 // https://github.com/ivanseidel/LinkedList
 LinkedList<String> networks = LinkedList<String>();
 
-const char* firmware = "3.53";
+const char* firmware = "3.55";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
@@ -54,6 +55,7 @@ DHT_22 dht_22(client, eepromhandler);
 Resist resist(client, eepromhandler);
 Distance distance(client, eepromhandler);
 Display display;
+Motion motion(client, eepromhandler);
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -173,6 +175,9 @@ void setup() {
   // LED
   led.setup(eepromhandler.getValueAsInt("led", false));
 
+  // MOTION
+  motion.setup(eepromhandler.getValueAsInt("motion", false), commandOut);
+
   // DHT22 sensor
   dht_22.setup(eepromhandler.getValueAsInt("dht22", false), commandOut);
 
@@ -229,6 +234,9 @@ void loop() {
 
   // LED
   led.loop();
+
+  // MOTION
+  motion.loop();
 
   // DHT22 sensor
   dht_22.loop();

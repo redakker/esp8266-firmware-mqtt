@@ -83,6 +83,7 @@ class WebServer {
               String mqttpw = server->arg("mqttpw") == NULL ? "" : server->arg("mqttpw");
               String sda = server->arg("sda") == NULL ? "" : server->arg("sda");
               String sdc = server->arg("sdc") == NULL ? "" : server->arg("sdc");
+              String motion = server->arg("motion") == NULL ? "" : server->arg("motion");
               
   
               if (action == "updatesettings") {
@@ -107,6 +108,7 @@ class WebServer {
                 root["mqttpw"] = mqttpw;
                 root["sda"] = sda;
                 root["sdc"] = sdc;
+                root["motion"] = motion;
                 
                 eepromhandler->save(root);
               }
@@ -261,6 +263,7 @@ class WebServer {
               content += "\">\r\n";
               content += "      </div>\r\n";
               content += " </div>\r\n";
+              
               content += "    <div class=\"form-group\">\r\n";
               content += "      <label for=\"dht22\" class=\"col-sm-3 control-label\">DHT 22</label>\r\n";
               content += "      <div class=\"col-sm-9\">\r\n";
@@ -269,6 +272,7 @@ class WebServer {
               content += "\">\r\n";
               content += "      </div>\r\n";
               content += "    </div>\r\n";
+              
               content += "    <div class=\"form-group\">\r\n";
               content += "      <label for=\"led\" class=\"col-sm-3 control-label\">Led</label>\r\n";
               content += "      <div class=\"col-sm-9\">\r\n";
@@ -277,6 +281,16 @@ class WebServer {
               content += "\">\r\n";
               content += "      </div>\r\n";
               content += "    </div>\r\n";
+              
+              content += "    <div class=\"form-group\">\r\n";
+              content += "      <label for=\"motion\" class=\"col-sm-3 control-label\">Motion sensor</label>\r\n";
+              content += "      <div class=\"col-sm-9\">\r\n";
+              content += "        <input  name=\"motion\" type=\"text\" id=\"motion\" placeholder=\"pin of the motion sensor\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("motion", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+              
               content += "    <div class=\"form-group\">\r\n";
               content += "      <label for=\"resistname\" class=\"col-sm-3 control-label\">Resist name</label>\r\n";
               content += "      <div class=\"col-sm-9\">\r\n";
