@@ -66,6 +66,9 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.55
+  - motion sencor object added (PIR sensor for arduino)
+
 3.53
   - relay fix: the topic condition was wrong
   - button fix: sent a command just once
