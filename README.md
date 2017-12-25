@@ -66,6 +66,11 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.53
+  - relay fix: the topic condition was wrong
+  - button fix: sent a command just once
+  - display fix: charachter numbers
+
 3.51
   - OLED object implemented
   - Tested with this kind of oled module: 0.96" I2C IIC Serial 128X64 128x64 White
