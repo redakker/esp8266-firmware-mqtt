@@ -66,6 +66,18 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.60
+  - WS2812B led strip implementation
+  - on the web interface you just set the data pin of the led strip and the pin number and you can control the led color and brightness wit MQTT command
+  - MQTT commands
+    - color: 
+      - command: /home/devices/[roomname]/[devicename]/in/color
+      - values: hexa color code. Example: #FF0000 or FF0000
+    - brightness:
+      - command: /home/devices/[roomname]/[devicename]/in/brightness
+      - valies: 0-255
+  - limitation: you can use pin 4 and 5 only, because of this value needs to be constant in the code. So it is solved by if conditions and the code was written in this way.
+
 3.55
   - motion sencor object added (PIR sensor for arduino)
 
