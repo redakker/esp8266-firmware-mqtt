@@ -89,7 +89,7 @@ class Distance {
             root["inch"] = inches;
   
             root.printTo((char*)jsonChar, root.measureLength() + 1);
-            clnt->publish(commandOut.c_str(), jsonChar);
+            clnt->publish(commandOut.c_str(), jsonChar, true);
   
             Serial.print("Send DHT22 data: ");
             Serial.print(inches);

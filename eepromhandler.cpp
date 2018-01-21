@@ -60,11 +60,15 @@ bool EEPROMHandler::save(JsonObject& json){
                 data+= DELIMITER;
                 data+= json["mqttpw"].as<String>(); // [17]
                 data+= DELIMITER;
-                data+= json["sda"].as<String>(); // [16]
+                data+= json["sda"].as<String>(); // [18]
                 data+= DELIMITER;
-                data+= json["sdc"].as<String>(); // [17]
+                data+= json["sdc"].as<String>(); // [19]
                 data+= DELIMITER;
-                data+= json["motion"].as<String>(); // [17]
+                data+= json["motion"].as<String>(); // [20]
+                data+= DELIMITER;
+                data+= json["ledpin"].as<String>(); // [21]
+                data+= DELIMITER;
+                data+= json["lednum"].as<String>(); // [22]
                 data+= DELIMITER;
                 
                 Serial.print("Data to save to EEPROM: ");
@@ -108,6 +112,8 @@ void EEPROMHandler::load(){
       this->root["sda"] = result[18]; // [18]
       this->root["sdc"] = result[19]; // [19]
       this->root["motion"] = result[20]; // [20]
+      this->root["ledpin"] = result[21]; // [21]
+      this->root["lednum"] = result[22]; // [22]
 
       Serial.println("EEPROM data");
       root.printTo(Serial);
@@ -207,7 +213,7 @@ boolean EEPROMHandler::IsNumeric(String str) {
       }
       return true;
 }
-//;;;;;;;;;;;;;rednet;unforgetable;;;;
+
 void EEPROMHandler::splitString(String text, char splitChar, String result[]) {
     int splitCount = countSplitCharacters(text, splitChar);    
     char buff[text.length()+1];

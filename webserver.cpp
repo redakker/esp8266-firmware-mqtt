@@ -15,9 +15,9 @@ class WebServer {
   LinkedList<String>* networks;
   String display = "station"; // station/ap
 
-  StaticJsonBuffer<500> jsonBuffer;
+  StaticJsonBuffer<1000> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
-  char jsonChar[500];
+  char jsonChar[1000];
     
   public:    
     WebServer(ESP8266WebServer& server, EEPROMHandler& eepromhandler){
@@ -84,6 +84,8 @@ class WebServer {
               String sda = server->arg("sda") == NULL ? "" : server->arg("sda");
               String sdc = server->arg("sdc") == NULL ? "" : server->arg("sdc");
               String motion = server->arg("motion") == NULL ? "" : server->arg("motion");
+              String ledpin = server->arg("ledpin") == NULL ? "" : server->arg("ledpin");
+              String lednum = server->arg("lednum") == NULL ? "" : server->arg("lednum");
               
   
               if (action == "updatesettings") {
@@ -109,6 +111,8 @@ class WebServer {
                 root["sda"] = sda;
                 root["sdc"] = sdc;
                 root["motion"] = motion;
+                root["ledpin"] = ledpin;
+                root["lednum"] = lednum;
                 
                 eepromhandler->save(root);
               }
@@ -290,6 +294,28 @@ class WebServer {
               content += "\">\r\n";
               content += "      </div>\r\n";
               content += "    </div>\r\n";
+
+              content += "    <div class=\"form-group form-inline\">\r\n";
+              content += "      <label for=\"button\" class=\"col-sm-3 control-label\">Led number on strip</label>\r\n";
+              content += "      <div class=\"col-sm-3\">\r\n";
+              content += "        <input name=\"lednum\" type=\"text\" id=\"lednum\" placeholder=\"led number on led strip (WS2812B)\" class=\"form-control\" value=\"";
+              content += eepromhandler->getValueAsString("lednum", false);
+              content += "\">\r\n";
+              content += "      </div>\r\n";
+              content += "      <label for=\"btype\" class=\"col-sm-3 control-label\">Led strip data pin</label>\r\n";
+              content += "      <div class=\"col-sm-3\">\r\n";
+              content += "        <select  name=\"ledpin\" id=\"ledpin\" class=\"form-control\">\r\n";
+              content += "          <option value=\"\">None</option>\r\n";
+              content += "          <option value=\"4\" ";
+              content += eepromhandler->getValueAsString("ledpin", false) == "4" ? "selected=\"selected\"" : "";
+              content += "          >4</option>\r\n";
+              content += "          <option value=\"5\" ";
+              content += eepromhandler->getValueAsString("ledpin", false) == "5" ? "selected=\"selected\"" : "";
+              content += "          >5</option>\r\n";
+              content += "        </select>\r\n";
+              content += "      </div>\r\n";
+              content += "    </div>\r\n";
+  
               
               content += "    <div class=\"form-group\">\r\n";
               content += "      <label for=\"resistname\" class=\"col-sm-3 control-label\">Resist name</label>\r\n";
@@ -299,6 +325,7 @@ class WebServer {
               content += "\">\r\n";
               content += "      </div>\r\n";
               content += "    </div>\r\n";
+              
               content += "    <div class=\"form-group form-inline\">\r\n";
               content += "      <label for=\"text\" class=\"col-sm-3 control-label\">Resist</label>\r\n";
               content += "      <div class=\"col-sm-3\">\r\n";
@@ -316,6 +343,9 @@ class WebServer {
               content += "        </select>\r\n";
               content += "      </div>\r\n";
               content += "    </div>\r\n";
+
+              
+              
               content += "    <hr />\r\n";
               content += "    <h2>Time configuration</h2>\r\n";
               content += "    <div class=\"form-group\">\r\n";

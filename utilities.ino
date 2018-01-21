@@ -34,11 +34,7 @@ bool setup_wifi(String str_ssid, String str_password) {
     }
     Serial.println("");    
   }
-Serial.print("counter: ");
-Serial.println(c);
-
-Serial.print("strlen: ");
-Serial.println(strlen(ssid));
+  
   if (c == tryCounter || strlen(ssid) == 0){
     Serial.println("Wifi connection was unsuccesful. Setup access point.");
     WiFi.disconnect();

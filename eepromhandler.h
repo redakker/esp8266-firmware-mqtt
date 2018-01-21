@@ -14,17 +14,17 @@
 class EEPROMHandler {
   
   EepromUtil* eepromutil;
-  StaticJsonBuffer<500> jsonBuffer;
+  StaticJsonBuffer<1000> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   const char DELIMITER = ';';
-  const int MAX_RESULT_NUMBER = 30;
+  const int MAX_RESULT_NUMBER = 40;
   
   public:    
     EEPROMHandler();
 	  ~EEPROMHandler();
 
     bool save(JsonObject& json);
-	bool updateProperty(String property, String value);
+	  bool updateProperty(String property, String value);
     void load();
     String getValueAsString(String name, bool loadbefore);
     int getValueAsInt(String name, bool loadbefore);

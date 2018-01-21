@@ -51,7 +51,7 @@ class Motion {
               
               root["motion"] = "moving";
               root.printTo((char*)jsonChar, root.measureLength() + 1);
-              clnt->publish(commandOut.c_str(), jsonChar);
+              clnt->publish(commandOut.c_str(), jsonChar, true);
               
               // We only want to print on the output change, not state
               pirState = HIGH;
@@ -63,7 +63,7 @@ class Motion {
               
               root["motion"] = "not_moving";
               root.printTo((char*)jsonChar, root.measureLength() + 1);
-              clnt->publish(commandOut.c_str(), jsonChar);
+              clnt->publish(commandOut.c_str(), jsonChar, true);
               
               // We only want to print on the output change, not state
               pirState = LOW;

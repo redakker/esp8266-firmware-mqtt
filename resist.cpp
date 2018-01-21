@@ -65,7 +65,7 @@ class Resist {
           root[name] = sensorValue;          
 
           root.printTo((char*)jsonChar, root.measureLength() + 1);
-          clnt->publish(commandOut.c_str(), jsonChar);
+          clnt->publish(commandOut.c_str(), jsonChar, true);
 
           Serial.print("Moisture sensor data: ");
           Serial.println(sensorValue);          

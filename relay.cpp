@@ -23,6 +23,7 @@ class Relay {
       this->pin = pin;
       this->commandIn = commandIn;
       this->commandIn.replace("#", "");
+      this->commandIn += "relay";
       Serial.print("Relay setup pin: ");      
       Serial.println(this->pin);
       

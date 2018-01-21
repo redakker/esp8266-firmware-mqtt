@@ -56,7 +56,7 @@ class DHT_22 {
           root["humidity"] = humidity;
 
           root.printTo((char*)jsonChar, root.measureLength() + 1);
-          clnt->publish(commandOut.c_str(), jsonChar);
+          clnt->publish(commandOut.c_str(), jsonChar, true);
 
           Serial.println("Send DHT22 data: ");
           Serial.println(humidity);          

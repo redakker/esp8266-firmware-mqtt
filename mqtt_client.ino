@@ -22,12 +22,13 @@
 #include "display.cpp"
 #include "webserver.cpp"
 #include "motion.cpp"
+#include "ws2812B.cpp"
 
 // This linkedList for the scanned network APs. In normal mode does not need this.
 // https://github.com/ivanseidel/LinkedList
 LinkedList<String> networks = LinkedList<String>();
 
-const char* firmware = "3.55";
+const char* firmware = "3.60";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
@@ -56,6 +57,7 @@ Resist resist(client, eepromhandler);
 Distance distance(client, eepromhandler);
 Display display;
 Motion motion(client, eepromhandler);
+WS2812BStrip strip(eepromhandler);
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -87,6 +89,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   // Display
   display.trigger(topic, payload_str);
+
+  // ledstrip
+  strip.trigger(topic, payload_str);
 
   // PING BEGIN
   /// Every device listen a special topic. If it gets this topic, it sends a messgae about its status (MAC, name etc.)
@@ -192,6 +197,9 @@ void setup() {
   int PIN_SDC = eepromhandler.getValueAsInt("sdc", false); 
   display.setup(PIN_SDA, PIN_SDC, commandIn);
 
+  // Led Strip
+  strip.setup(eepromhandler.getValueAsInt("ledpin", false), commandIn);
+
   wifi_station_mode = setup_wifi(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
   if (wifi_station_mode) {
     Serial.println("Succesfully connected to the configured network. Wifi started as client mode.");
@@ -249,6 +257,9 @@ void loop() {
 
   // Display
   display.loop();
+
+  // Led Strip
+  strip.loop();
   
   // WebServer
   webserver.loop();
