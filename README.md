@@ -66,6 +66,10 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.70
+  - wifi setup moved to an individual object
+  - network setup uses the given device parameters as hostname
+
 3.60
   - WS2812B led strip implementation
   - on the web interface you just set the data pin of the led strip and the pin number and you can control the led color and brightness wit MQTT command
