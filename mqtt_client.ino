@@ -4,15 +4,15 @@
 
   Read the documantation on Git:
   https://github.com/redakker/esp8266-firmware-mqtt
- 
+
 */
 
-#include <ESP8266WiFi.h>
+
 #include <PubSubClient.h>
 #include <ESP8266WebServer.h>
 #include <EEPROM.h>
-#include <LinkedList.h>
 #include "eepromhandler.h"
+#include "wifi.cpp"
 #include "button.cpp"
 #include "relay.cpp"
 #include "led.cpp"
@@ -24,11 +24,8 @@
 #include "motion.cpp"
 #include "ws2812B.cpp"
 
-// This linkedList for the scanned network APs. In normal mode does not need this.
-// https://github.com/ivanseidel/LinkedList
-LinkedList<String> networks = LinkedList<String>();
 
-const char* firmware = "3.60";
+const char* firmware = "3.70";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
@@ -39,7 +36,6 @@ String commandOut = "";
 
 const char* PING_IN_TOPIC = "/home/ping";
 const char* PING_OUT_TOPIC = "/home/pong";
-bool wifi_station_mode = false;
 // MQTT connect try
 int lasttry = 10000;
 
@@ -58,6 +54,7 @@ Distance distance(client, eepromhandler);
 Display display;
 Motion motion(client, eepromhandler);
 WS2812BStrip strip(eepromhandler);
+OnboardWifi onboardWifi(eepromhandler);
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -76,7 +73,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("] ");
   for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
-    payload_str+=(char)payload[i];
+    payload_str += (char)payload[i];
   }
   Serial.println();
 
@@ -95,19 +92,19 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   // PING BEGIN
   /// Every device listen a special topic. If it gets this topic, it sends a messgae about its status (MAC, name etc.)
-  
-  pong(topic);  
-  
+
+  pong(topic);
+
   // PING END
 
-  led.operation(100,4);
+  led.operation(100, 4);
 }
 
 void reconnect() {
   // Loop until we're reconnected
   if (!client.connected()) {
     // Wait 5 seconds before retrying
-    if (millis() - lasttry > 5000){
+    if (millis() - lasttry > 5000) {
       lasttry = millis();
       Serial.print("Attempting MQTT connection...");
       Serial.print(" server: ");
@@ -119,7 +116,7 @@ void reconnect() {
 
       const char* mqtt_u = const_cast<char*>(mqtt_user.c_str());
       const char* mqtt_p = const_cast<char*>(mqtt_password.c_str());
-      
+
       // Create a random client ID
       String clientId = room + "/" + device + "-";
       clientId += String(random(0xffff), HEX);
@@ -129,11 +126,11 @@ void reconnect() {
         // Once connected, publish an announcement...
         client.subscribe(commandIn.c_str());
         client.subscribe(PING_IN_TOPIC);
-        
+
         Serial.println("Subsribed topics:");
         Serial.println(commandIn.c_str());
         Serial.println(PING_IN_TOPIC);
-        //led.operation(100,3);      
+        //led.operation(100,3);
       } else {
         Serial.print("failed, rc=");
         Serial.print(client.state());
@@ -147,7 +144,7 @@ void reconnect() {
 void setup() {
   // Init serial
   Serial.begin(115200);
-  
+
   // Help to erase EEPROM if something went wrong
   //eepromhandler.reset();
 
@@ -163,7 +160,7 @@ void setup() {
 
   room = eepromhandler.getValueAsString("room", false);
   device = eepromhandler.getValueAsString("device", false);
-  
+
   commandIn = "/home/device/" + room + "/" + device + "/in/#";
   commandOut = "/home/device/" + room + "/" + device + "/";
 
@@ -194,39 +191,39 @@ void setup() {
 
   // Display
   int PIN_SDA = eepromhandler.getValueAsInt("sda", false);
-  int PIN_SDC = eepromhandler.getValueAsInt("sdc", false); 
+  int PIN_SDC = eepromhandler.getValueAsInt("sdc", false);
   display.setup(PIN_SDA, PIN_SDC, commandIn);
 
   // Led Strip
   strip.setup(eepromhandler.getValueAsInt("ledpin", false), commandIn);
 
-  wifi_station_mode = setup_wifi(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
-  if (wifi_station_mode) {
-    Serial.println("Succesfully connected to the configured network. Wifi started as client mode.");
-  } else {
+  onboardWifi.setup(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
+  if (!onboardWifi.isConnected()) {
     Serial.println("Cannot connect to the wifi network. Wifi started as AP mode.");
+  } else {
+    Serial.println("Succesfully connected to the configured network. Wifi started as client mode.");    
   }
 
   // Set up WebServer
-  webserver.setup(wifi_station_mode, networks);
+  webserver.setup(onboardWifi.isConnected(), onboardWifi.getNetworks());
 
-  if (wifi_station_mode){
+  if (onboardWifi.isConnected()) {
 
     // Set the server, user and passwor from EEPROM
     mqtt_server = eepromhandler.getValueAsString("mqttbroker", false);
     mqtt_user = eepromhandler.getValueAsString("mqttuser", false);
     mqtt_password = eepromhandler.getValueAsString("mqttpw", false);
 
-    const char* mqtt_s = const_cast<char*>(mqtt_server.c_str());    
-   
+    const char* mqtt_s = const_cast<char*>(mqtt_server.c_str());
+
     client.setServer(mqtt_s, 1883);
-    client.setCallback(callback);  
+    client.setCallback(callback);
   }
 }
 
 void loop() {
 
-  if (!client.connected() && wifi_station_mode) {
+  if (!client.connected() && onboardWifi.isConnected()) {
     reconnect();
   }
 
@@ -260,12 +257,12 @@ void loop() {
 
   // Led Strip
   strip.loop();
-  
+
   // WebServer
   webserver.loop();
-  
+
   // MQTT loop
-  if (wifi_station_mode){
+  if (onboardWifi.isConnected()) {
     client.loop();
   }
 }
