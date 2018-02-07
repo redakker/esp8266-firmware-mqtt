@@ -66,6 +66,10 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.72
+  - 3.70 crash fix, it crashed after code was uploaded to a virgin board
+  - wifi fix: Acces Point switched off after wifi is configured and connected in station mode  
+
 3.70
   - wifi setup moved to an individual object
   - network setup uses the given device parameters as hostname
