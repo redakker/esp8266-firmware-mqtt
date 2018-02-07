@@ -10,6 +10,7 @@
 
 #include <PubSubClient.h>
 #include <ESP8266WebServer.h>
+#include <LinkedList.h>
 #include <EEPROM.h>
 #include "eepromhandler.h"
 #include "wifi.cpp"
@@ -25,7 +26,7 @@
 #include "ws2812B.cpp"
 
 
-const char* firmware = "3.70";
+const char* firmware = "3.72";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
@@ -36,6 +37,7 @@ String commandOut = "";
 
 const char* PING_IN_TOPIC = "/home/ping";
 const char* PING_OUT_TOPIC = "/home/pong";
+LinkedList<String> networks = LinkedList<String>();
 // MQTT connect try
 int lasttry = 10000;
 
@@ -54,7 +56,7 @@ Distance distance(client, eepromhandler);
 Display display;
 Motion motion(client, eepromhandler);
 WS2812BStrip strip(eepromhandler);
-OnboardWifi onboardWifi(eepromhandler);
+OnboardWifi onboardWifi(eepromhandler, networks);
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -204,8 +206,8 @@ void setup() {
     Serial.println("Succesfully connected to the configured network. Wifi started as client mode.");    
   }
 
-  // Set up WebServer
-  webserver.setup(onboardWifi.isConnected(), onboardWifi.getNetworks());
+  // Set up WebServer  
+  webserver.setup(onboardWifi.isConnected(), networks);
 
   if (onboardWifi.isConnected()) {
 

@@ -25,7 +25,7 @@ class WebServer {
        this->eepromhandler = &eepromhandler;       
     }
 
-    void setup(bool wifi_station_mode, LinkedList<String> networks) {      
+    void setup(bool wifi_station_mode, LinkedList<String>& networks) {      
       
       this->networks = &networks;      
       Serial.print("WebServer started in ");

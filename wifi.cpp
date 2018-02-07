@@ -20,15 +20,15 @@ class OnboardWifi {
     // Work variables
     bool connected = false;
 
-
     // This linkedList for the scanned network APs. In normal mode does not need this.
     // https://github.com/ivanseidel/LinkedList
-    LinkedList<String> networks = LinkedList<String>();
+    LinkedList<String>* networks = new LinkedList<String>();
 
 
   public:
-    OnboardWifi(EEPROMHandler& eepromhandler) {
+    OnboardWifi(EEPROMHandler& eepromhandler, LinkedList<String>& networks) {
       this->eepromhandler = &eepromhandler;
+      this->networks = &networks;
     }
 
     void setup(String str_ssid, String str_password) {
@@ -44,8 +44,12 @@ class OnboardWifi {
         Serial.print("Connecting to ");
         Serial.print(ssid);
         Serial.print(" with password ");
-        Serial.print(password);
+        Serial.println(password);
         WiFi.persistent(false);
+        WiFi.softAPdisconnect();
+        WiFi.disconnect();
+        WiFi.mode(WIFI_STA);
+        delay(100);
 
         // Set the hostname from the given device parameters if we have
         // Hostname should be set before Wifi.begin()
@@ -53,10 +57,12 @@ class OnboardWifi {
         String device = eepromhandler->getValueAsString("device", false);
 
         String hostname = room + "." + device;
-        if (hostname == ".") {
-          hostname = "NonConfiguredESP";
+        Serial.print("Calculated hostname: ");
+        Serial.println(hostname);
+        if (hostname != ".") {          
+          WiFi.hostname(hostname);
         }
-        WiFi.hostname(hostname);
+        
 
         WiFi.begin(ssid, password);
 
@@ -73,7 +79,7 @@ class OnboardWifi {
 
       if (c == tryCounter || strlen(ssid) == 0) {
         Serial.println("Wifi connection was unsuccesful. Setup access point.");
-        WiFi.disconnect();
+        //WiFi.disconnect();
         setupAP();
         this->connected = false;
       } else {
@@ -86,7 +92,6 @@ class OnboardWifi {
         Serial.println(WiFi.macAddress());
         this->connected = true;
       }
-
     }
 
     void loop() {
@@ -95,20 +100,6 @@ class OnboardWifi {
 
     bool isConnected() {
       return this->connected;
-    }
-
-    LinkedList<String> getNetworks() {
-      return this->networks;
-    }
-
-
-  private:
-
-    String ipToString(IPAddress ip) {
-      String s = "";
-      for (int i = 0; i < 4; i++)
-        s += i  ? "." + String(ip[i]) : String(ip[i]);
-      return s;
     }
 
     void setupAP() {
@@ -138,7 +129,7 @@ class OnboardWifi {
           String ssid = String (WiFi.SSID(i));
           ssid += WiFi.encryptionType(i) == ENC_TYPE_NONE ? String("") : String("*");
           //Serial.println(*ssid);
-          networks.add(ssid);
+          networks->add(ssid);
 
           delay(10);
         }
@@ -151,7 +142,7 @@ class OnboardWifi {
       IPAddress gateway(192, 168, 1, 1);
       IPAddress subnet(255, 255, 255, 0);
       WiFi.softAPConfig(ip, gateway, subnet);
-      const char* ap_ssid = "ESP_AP_nopw_ip_192_168_1_1";
+      const char* ap_ssid = "ESP_nopw_ip_192_168_1_1";
 
       WiFi.softAP(ap_ssid);
       Serial.println("softap ready");
@@ -161,6 +152,18 @@ class OnboardWifi {
       Serial.print("AP ssid: ");
       Serial.println(ap_ssid);
     }
+
+
+  private:
+
+    String ipToString(IPAddress ip) {
+      String s = "";
+      for (int i = 0; i < 4; i++)
+        s += i  ? "." + String(ip[i]) : String(ip[i]);
+      return s;
+    }
+
+
     /*
       private methods comes here
       void privatefunc(){
