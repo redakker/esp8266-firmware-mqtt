@@ -29,7 +29,7 @@ class Relay {
       
       if (pin > -1){
        pinMode(pin, OUTPUT);     // Initialize the RELAY pin as an output
-       digitalWrite(pin, LOW);   // Default OFF
+       digitalWrite(pin, HIGH);   // Default OFF
        Serial.println("Relay setup ready");     
       }
     }
@@ -45,10 +45,12 @@ class Relay {
         String topic_str = String(topic);
         if (topic_str == commandIn) {
           if (payload == "1") {
-            digitalWrite(pin, HIGH);
+            digitalWrite(pin, LOW);
+            Serial.println("Set the relay on");
             //operation(100, 4);
           } else {
-            digitalWrite(pin, LOW);
+            digitalWrite(pin, HIGH);
+            Serial.println("Set the relay off");
             //operation(500, 4);
           }                
         }

@@ -56,10 +56,10 @@ class OnboardWifi {
         String room = eepromhandler->getValueAsString("room", false);
         String device = eepromhandler->getValueAsString("device", false);
 
-        String hostname = room + "." + device;
+        String hostname = room + "_" + device;
         Serial.print("Calculated hostname: ");
         Serial.println(hostname);
-        if (hostname != ".") {          
+        if (hostname != "_") {          
           WiFi.hostname(hostname);
         }
         
