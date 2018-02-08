@@ -66,6 +66,11 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.74
+  - relay fixed, it switch on if the payload is 1 and off in case 0
+  - wifi hostname can't contain . Use underscore instead of dot
+  - Info page implemented. It easier to find out which topics and payloads needs to control the devices
+
 3.72
   - 3.70 crash fix, it crashed after code was uploaded to a virgin board
   - wifi fix: Acces Point switched off after wifi is configured and connected in station mode  
