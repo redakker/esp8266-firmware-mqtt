@@ -66,6 +66,16 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.78
+  - pong message changed. IP address added and unused text was removed
+  - Predefined color palettes and breathe support for LED strip
+    - command: /home/devices/[roomname]/[devicename]/in/color
+      - values: demo01 - demo06
+    - command: /home/devices/[roomname]/[devicename]/in/breathe
+      - values: 0 - 10
+  - breathe working in case of static color only
+  
+  
 3.76
   - RGB payload support for LED strip (WS2812B) to make compatible with Home Assistant
     - command: /home/devices/[roomname]/[devicename]/in/color
