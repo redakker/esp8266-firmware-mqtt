@@ -66,6 +66,13 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.76
+  - RGB payload support for LED strip (WS2812B) to make compatible with Home Assistant
+    - command: /home/devices/[roomname]/[devicename]/in/color
+      - values: hexa color code. Example: #FF0000 or FF0000
+        or
+      - RGB color code in format r,g,b Example: 255,73,5 (comma separated)
+  
 3.74
   - relay fixed, it switch on if the payload is 1 and off in case 0
   - wifi hostname can't contain . Use underscore instead of dot
