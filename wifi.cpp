@@ -19,6 +19,7 @@ class OnboardWifi {
 
     // Work variables
     bool connected = false;
+    String ipAddress = "";
 
     // This linkedList for the scanned network APs. In normal mode does not need this.
     // https://github.com/ivanseidel/LinkedList
@@ -87,7 +88,8 @@ class OnboardWifi {
         Serial.println("");
         Serial.println("WiFi connected");
         Serial.println("IP address: ");
-        Serial.println(ipToString(WiFi.localIP()));
+        this->ipAddress = ipToString(WiFi.localIP());
+        Serial.println(this->ipAddress);
         Serial.println("MAC address: ");
         Serial.println(WiFi.macAddress());
         this->connected = true;
@@ -100,6 +102,10 @@ class OnboardWifi {
 
     bool isConnected() {
       return this->connected;
+    }
+
+    String getIPAddress() {
+      return this->ipAddress;
     }
 
     void setupAP() {

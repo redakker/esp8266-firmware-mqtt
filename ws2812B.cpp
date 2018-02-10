@@ -20,6 +20,10 @@ class WS2812BStrip {
     int prevBrightness = 0;
     const int MAX_RESULT_NUMBER = 4;
     const char DELIMITER = ',';
+    int breathe = 0;
+
+    CRGBPalette16 currentPalette;
+    TBlendType    currentBlending;
 
   public:
     WS2812BStrip(EEPROMHandler& eepromhandler) {
@@ -54,12 +58,30 @@ class WS2812BStrip {
 
     void loop() {
       if (pin > -1) {
-        if (color != prevColor || brightness != prevBrightness) {
-          FillLEDsColors();
+        if (color.startsWith("demo")) {
+          static uint8_t startIndex = 0;          
+          startIndex = startIndex + 1; /* motion speed */    
+          
+          ChangePalette(color);
+          FillLEDsFromPaletteColors( startIndex);
           FastLED.setBrightness(brightness);
           FastLED.show();
           FastLED.delay(10);
-          prevColor = color;
+        } else {
+          if (color != prevColor || brightness != prevBrightness || breathe > 0) {
+
+            float bright = brightness;
+            if (breathe > 0) {
+              float d = (float) breathe * 1000.0;
+              bright = (exp(sin(millis() / d * PI)) - 0.36787944)*108.0;
+            }
+            
+            FillLEDsColors();
+            FastLED.setBrightness(bright);
+            FastLED.show();
+            FastLED.delay(10);
+            prevColor = color;
+          }
         }
       }
     }
@@ -86,7 +108,7 @@ class WS2812BStrip {
             payload.replace("]", "");
             payload = payload + DELIMITER;
 
-            String result[MAX_RESULT_NUMBER];                  
+            String result[MAX_RESULT_NUMBER];
             splitString(payload, DELIMITER, result);
 
             String r = result[0];
@@ -109,13 +131,19 @@ class WS2812BStrip {
 
           this->color = givenColor;
           Serial.print("Set color to #");
-          Serial.print(color);
+          Serial.println(color);
         }
 
         if (topic_str == (this->commandIn + "/brightness")) {
           this->brightness = atoi( payload.c_str() );
           Serial.print("Set brightness to ");
           Serial.println(brightness);
+        }
+
+        if (topic_str == (this->commandIn + "/breathe")) {          
+            this->breathe = payload.toInt();
+            Serial.print("Set breathe to ");
+            Serial.println(this->breathe);                      
         }
       }
     }
@@ -130,12 +158,39 @@ class WS2812BStrip {
       }
     }
 
+    void FillLEDsFromPaletteColors( uint8_t colorIndex)
+    {
+      uint8_t brightness = this->brightness;
+
+      for ( int i = 0; i < lednum; i++) {
+        leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
+        colorIndex += 3;
+      }
+    }
+
+    void ChangePalette(String demo) {
+               
+        if( demo == "demo01")  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
+        if( demo == "demo02")  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
+        if( demo == "demo03")  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
+        if( demo == "demo04")  { currentPalette = CloudColors_p;           currentBlending = LINEARBLEND; }
+        if( demo == "demo05")  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
+        if( demo == "demo06")  { SetupTotallyRandomPalette();              currentBlending = LINEARBLEND; }
+    }
+
+    // This function fills the palette with totally random colors.
+    void SetupTotallyRandomPalette() {
+        for( int i = 0; i < 16; i++) {
+            currentPalette[i] = CHSV( random8(), 255, random8());
+        }
+    }
+
     String decimalToHexadecimal(String colorCode) {
-      
+
       int dec = 0;
-      
+
       dec = colorCode.toInt();
-           
+
       if (dec < 1) return "00";
 
       int hex = dec;
@@ -155,7 +210,7 @@ class WS2812BStrip {
         if (splitCount < MAX_RESULT_NUMBER) {
           if (buff[i] == splitChar) {
             result[counter] = text.substring(from, i);
-            result[counter].trim();            
+            result[counter].trim();
             from = i + 1;
             counter++;
           }

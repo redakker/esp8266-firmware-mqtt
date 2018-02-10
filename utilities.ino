@@ -39,11 +39,12 @@ void pong(char* topic){
       StaticJsonBuffer<500> jsonBuffer;
       JsonObject& root = jsonBuffer.createObject();
       root["fw"] = firmware;        
-      root["mac"] = String(WiFi.macAddress());
+      //root["mac"] = String(WiFi.macAddress());
       root["room"] = room;
       root["device"] = device;
       root["up"] = uptime();
-      root["vcc"] = ESP.getVdd33();
+      //root["vcc"] = ESP.getVdd33();
+      root["ip"] = onboardWifi.getIPAddress();
           
       char jsonChar[500];
       root.printTo((char*)jsonChar, root.measureLength() + 1);

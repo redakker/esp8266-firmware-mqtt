@@ -529,10 +529,28 @@ class WebServer {
         content += "        <div style=\"margin-left: 20px;\"><strong>" + commandOut + "</strong></div>\r\n";
         content += "        <hr/>\r\n";
         
-        content += "        <h3>Led strip topic</h3>   \r\n";
+        content += "        <h3>Led strip color topic</h3>   \r\n";
         content += "          <div style=\"margin-left: 20px;\">Change color topic: <strong>" + commandIn + "color</strong></div>\r\n";
-        content += "          <div style=\"margin-left: 20px;\">Payload: <strong>HEX color code</strong></div>\r\n";
-        content += "          <div style=\"margin-left: 20px;\">Example: <strong>#FFFF00</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Payload: <strong>HEX or RGB color code</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Example: <strong>#FFFF00</strong> or <strong>235,56,88</strong></div>\r\n";
+        content += "        <hr/>\r\n";
+
+        content += "        <h3>Led strip brightness topic</h3>   \r\n";
+        content += "          <div style=\"margin-left: 20px;\">Change brightness: <strong>" + commandIn + "brightness</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Payload: <strong>number 0-255</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Example: <strong>130</strong></div>\r\n";
+        content += "        <hr/>\r\n";
+
+        content += "        <h3>Led strip breathe topic</h3>   \r\n";
+        content += "          <div style=\"margin-left: 20px;\">Change brightness: <strong>" + commandIn + "breathe</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Payload: <strong>number 0-10</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">This is working just in case of static color.</div>\r\n";
+        content += "        <hr/>\r\n";
+
+        content += "        <h3>Led strip demo mode</h3>   \r\n";
+        content += "          <div style=\"margin-left: 20px;\">Change brightness: <strong>" + commandIn + "color</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Payload: <strong>demo01 - demo06</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Animated color modes 1-6</div>\r\n";
         content += "        <hr/>\r\n";
 
         content += "        <h3>Relay topic</h3>   \r\n";
