@@ -26,7 +26,7 @@
 #include "ws2812B.cpp"
 
 
-const char* firmware = "3.72";
+const char* firmware = "3.74";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";

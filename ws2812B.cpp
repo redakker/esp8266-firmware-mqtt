@@ -1,4 +1,7 @@
 #define FASTLED_ESP8266_RAW_PIN_ORDER
+#define FASTLED_ALLOW_INTERRUPTS 0
+#define FASTLED_INTERRUPT_RETRY_COUNT 3
+#define FASTLED_ESP8266_DMA
 #include <FastLED.h>
 #include <ArduinoJson.h>
 #include "eepromhandler.h"
