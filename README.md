@@ -26,6 +26,7 @@ Steps to make it work:
   - install library: DHT sensor library (1.3.0)
   - install library: Adafruit Unified Sensor (1.0.2)
   - install library: LinkedList (1.2.3)
+  - install library: FastLed (3.1.6)
   
   Search for ESP.cpp in the Arduino ide library: c:\Users\$USER\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266 
   
