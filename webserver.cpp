@@ -14,9 +14,6 @@ class WebServer {
     EEPROMHandler* eepromhandler;
     LinkedList<String>* networks;
     String display = "station"; // station/ap
-
-    StaticJsonBuffer<1000> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
     char jsonChar[1000];
 
   public:
@@ -90,31 +87,31 @@ class WebServer {
 
           if (action == "updatesettings") {
 
-            root["device"] = device;
-            root["room"] = room;
-            root["button"] = button;
-            root["btype"] = btype;
-            root["relay"] = relay;
-            root["dht22"] = dht22;
-            root["led"] = led ;
-            root["resist"] = resist;
-            root["rtype"] = rtype;
-            root["interval"] = interval;
-            root["resistname"] = resistname;
-            root["trigger"] = trigger;
-            root["echo"] = echo;
-            root["ssid"] = ssid;
-            root["wifipasswd"] = wifipasswd;
-            root["mqttbroker"] = mqttbroker;
-            root["mqttuser"] = mqttuser;
-            root["mqttpw"] = mqttpw;
-            root["sda"] = sda;
-            root["sdc"] = sdc;
-            root["motion"] = motion;
-            root["ledpin"] = ledpin;
-            root["lednum"] = lednum;
+            eepromhandler-> updateProperty("device", device, false);
+            eepromhandler-> updateProperty("room", room, false);
+            eepromhandler-> updateProperty("button", button, false);
+            eepromhandler-> updateProperty("btype", btype, false);
+            eepromhandler-> updateProperty("relay", relay, false);
+            eepromhandler-> updateProperty("dht22", dht22, false);
+            eepromhandler-> updateProperty("led", led , false);
+            eepromhandler-> updateProperty("resist", resist, false);
+            eepromhandler-> updateProperty("rtype", rtype, false);
+            eepromhandler-> updateProperty("interval", interval, false);
+            eepromhandler-> updateProperty("resistname", resistname, false);
+            eepromhandler-> updateProperty("trigger", trigger, false);
+            eepromhandler-> updateProperty("echo", echo, false);
+            eepromhandler-> updateProperty("ssid", ssid, false);
+            eepromhandler-> updateProperty("wifipasswd", wifipasswd, false);
+            eepromhandler-> updateProperty("mqttbroker", mqttbroker, false);
+            eepromhandler-> updateProperty("mqttuser", mqttuser, false);
+            eepromhandler-> updateProperty("mqttpw", mqttpw, false);
+            eepromhandler-> updateProperty("sda", sda, false);
+            eepromhandler-> updateProperty("sdc", sdc, false);
+            eepromhandler-> updateProperty("motion", motion, false);
+            eepromhandler-> updateProperty("ledpin", ledpin, false);
+            eepromhandler-> updateProperty("lednum", lednum, false);
 
-            eepromhandler->save(root);
+            eepromhandler->save();
           }
 
           eepromhandler->load();
@@ -384,9 +381,9 @@ class WebServer {
           String password = server->arg("password") == NULL ? "" : server->arg("password");
 
           if (action == "updatewifi") {
-            root["ssid"] = ssid;
-            root["wifipasswd"] = password;
-            eepromhandler->save(root);
+            eepromhandler-> updateProperty("ssid", ssid, false);
+            eepromhandler-> updateProperty("wifipasswd", password, false);
+            eepromhandler->save();
           }
 
 

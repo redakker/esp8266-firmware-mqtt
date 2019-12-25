@@ -7,14 +7,11 @@ class Button {
     String type; /* stateful, stateless */
     PubSubClient* clnt;    
     String commandOut;
+    String device;
     EEPROMHandler* eepromhandler;
 
     // Work variables
     String lastvalue;
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
-    char jsonChar[500];
-    
     
   public:
     
@@ -43,23 +40,19 @@ class Button {
         pinMode(pin, INPUT);      
         lastvalue = "";
         Serial.println("Button setup ready");
-        root["device"] = eepromhandler->getValueAsString("device", true);
-        root["type"] = "button";
-        root["pin"] = pin;
+        this->device = eepromhandler->getValueAsString("device", true);           
       }
     }
 
     void loop() {
       if (pin > -1){   
         boolean buttonState = digitalRead(pin);
-        if (type == "stateful"){
-          root["buttontype"] = "stateful";    
+        if (type == "stateful"){          
           if (buttonState == HIGH && lastvalue != "HIGH") {
             Serial.println("Button switched on");
-            lastvalue = "HIGH";            
-            root["value"] = "1";
-            root.printTo((char*)jsonChar, root.measureLength() + 1);
-            clnt->publish(commandOut.c_str(), jsonChar);
+            lastvalue = "HIGH";                        
+            String message = "{device: \"" + this-> device + "\",type:\"buttonstateful\",value:1}";
+            clnt->publish(commandOut.c_str(), (char*) message.c_str());
             Serial.println("Send button state 1");
             delay(10);
           }
@@ -67,9 +60,8 @@ class Button {
           if (buttonState == LOW && lastvalue != "LOW") {
             Serial.println("Button switched off");
             lastvalue = "LOW";            
-            root["value"] = "0";
-            root.printTo((char*)jsonChar, root.measureLength() + 1);
-            clnt->publish(commandOut.c_str(), jsonChar);
+            String message = "{device: \"" + this-> device + "\",type:\"buttonstateful\",value:0}";
+            clnt->publish(commandOut.c_str(), (char*) message.c_str());
             Serial.println("Send button state 0");
             delay(10);
           }
@@ -80,10 +72,8 @@ class Button {
           if (buttonState == LOW) {
               while (!digitalRead(this->pin)) {}
               Serial.println("Button pushed");
-              root["buttontype"] = "stateless";
-              root["value"] = "1";
-              root.printTo((char*)jsonChar, root.measureLength() + 1);            
-              clnt->publish(commandOut.c_str(), jsonChar, false);
+              String message = "{device: \"" + this-> device + "\",type:\"buttonstateless\",value:1}";
+              clnt->publish(commandOut.c_str(), (char*) message.c_str());              
               Serial.println("Send state 1");          
               delay(10);
           }    
@@ -99,5 +89,3 @@ class Button {
     }
     */
 };
-
-

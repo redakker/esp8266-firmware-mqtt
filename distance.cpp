@@ -26,9 +26,7 @@ class Distance {
 
     // Work variables
     float distance;    
-    unsigned long lastSend;
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    unsigned long lastSend;    
     char jsonChar[500];
     int interval = 0;
     
@@ -48,8 +46,7 @@ class Distance {
       Serial.print("Echo: ");      
       Serial.println(this->echoPin);
 
-      if (triggerPin > -1 && echoPin > -1){
-        root["device"] = eepromhandler->getValueAsString("device", false);
+      if (triggerPin > -1 && echoPin > -1){        
         this->interval = eepromhandler->getValueAsInt("interval", false);
         Serial.println("Distance setup ready");        
       }
@@ -83,13 +80,8 @@ class Distance {
             inches = microsecondsToInches(duration);
             cm = microsecondsToCentimeters(duration);
   
-            
-            root["type"] = "distance";                    
-            root["cm"] = cm;
-            root["inch"] = inches;
-  
-            root.printTo((char*)jsonChar, root.measureLength() + 1);
-            clnt->publish(commandOut.c_str(), jsonChar, true);
+            String message = "{type: \"dht22\", cm: \"" + String(cm) + "\", inch: \"" + String(inches) + "\"}";
+            clnt->publish(commandOut.c_str(), (char*) message.c_str(), true);
   
             Serial.print("Send DHT22 data: ");
             Serial.print(inches);

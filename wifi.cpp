@@ -4,7 +4,7 @@
    AP mode: if the given credentials are not fit to the wifi network
 
    In AP mode the WIFI AP credentials are hardcoded:
-   name: ESP_AP_nopw_ip_192_168_1_1
+   name: ESP_nopw_ip_192_168_1_1
    IP: 192.168.1.1
    password: no password
 */

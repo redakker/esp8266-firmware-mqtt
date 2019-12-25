@@ -2,7 +2,7 @@
 #define _EEPROMHANDLER_H_
 
 #include <string.h>
-#include <ArduinoJson.h>
+#include <ArduinoJson.h> // version 6
 
 // http://playground.arduino.cc/Code/EepromUtil
 // Before compile should add to the compiler's libraries folder 
@@ -14,17 +14,14 @@
 class EEPROMHandler {
   
   EepromUtil* eepromutil;
-  StaticJsonBuffer<1000> jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
-  const char DELIMITER = ';';
-  const int MAX_RESULT_NUMBER = 40;
+  StaticJsonDocument<1000> jsonDoc;
   
   public:    
     EEPROMHandler();
 	  ~EEPROMHandler();
 
-    bool save(JsonObject& json);
-	  bool updateProperty(String property, String value);
+    bool save();
+	  bool updateProperty(String property, String value, boolean saveValues);
     void load();
     String getValueAsString(String name, bool loadbefore);
     int getValueAsInt(String name, bool loadbefore);

@@ -6,6 +6,7 @@
 class DHT_22 {
     int pin = -1;
     String commandOut;
+    String device;
     PubSubClient* clnt;
     DHT* dht = NULL;
     EEPROMHandler* eepromhandler;
@@ -13,9 +14,7 @@ class DHT_22 {
     // Work variables
     float humidity;
     float temperature;
-    unsigned long lastSend;
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    unsigned long lastSend;    
     char jsonChar[500];
     int interval = 0;
         
@@ -39,8 +38,8 @@ class DHT_22 {
         dht->begin();
         lastSend = 0;
         Serial.println("DHT22 setup ready");
-        root["device"] = eepromhandler->getValueAsString("device", false);
-        root["type"] = "dht22";
+        this->device = eepromhandler->getValueAsString("device", false);
+        
         this->interval = eepromhandler->getValueAsInt("interval", false);        
       }
     }
@@ -51,12 +50,10 @@ class DHT_22 {
         if (millis() - lastSend > interval){
           lastSend = millis();                   
           humidity = dht->readHumidity();
-          temperature = dht->readTemperature();
-          root["temperature"] = temperature;
-          root["humidity"] = humidity;
+          temperature = dht->readTemperature();          
 
-          root.printTo((char*)jsonChar, root.measureLength() + 1);
-          clnt->publish(commandOut.c_str(), jsonChar, true);
+          String message = "{device: \"" + this->device + "\", type: \"dht22\", temperature: \"" + temperature + "\", humidity: \"" + humidity + "\"}";
+          clnt->publish(commandOut.c_str(), (char*)message.c_str(), true);
 
           Serial.println("Send DHT22 data: ");
           Serial.println(humidity);          

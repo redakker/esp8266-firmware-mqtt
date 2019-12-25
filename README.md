@@ -22,7 +22,7 @@ Steps to make it work:
   - open, the code (mqtt_client.ino)
   - change the board (tool/Board/Generic ESP8266 Module)
   - install library: PubSubClient (2.6.0)
-  - install library: ArduinoJson (5.11.1)
+  - install library: ArduinoJson (6.13.0)
   - install library: DHT sensor library (1.3.0)
   - install library: Adafruit Unified Sensor (1.0.2)
   - install library: LinkedList (1.2.3)
@@ -66,6 +66,11 @@ digital pin: 14 (not tried)
 
 
 Release notes:
+
+3.90
+  - Arduino Json version update
+  - fine tune
+  - flipDot handler object added (not implemented yet)
 
 3.78
   - pong message changed. IP address added and unused text was removed

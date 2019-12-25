@@ -13,9 +13,7 @@ class Resist {
     
     // Work variables
     int sensorValue = 0;
-    unsigned long lastSend;
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    unsigned long lastSend;    
     char jsonChar[500];
     int interval = 0 ;
     
@@ -41,8 +39,7 @@ class Resist {
       if (pin > -1){
         if (type == "digital"){
           pinMode(pin, INPUT); 
-        }
-        root["device"] = eepromhandler->getValueAsString("device", false);
+        }        
         this->interval = eepromhandler->getValueAsInt("interval", false);
       }
     }
@@ -51,21 +48,9 @@ class Resist {
       if (pin > -1){       
         if (millis() - lastSend > interval){
           lastSend = millis();          
-          root["type"] = name;
-          root["analogdigital"] = type;
 
-          if (type == "analog"){
-            sensorValue = analogRead(pin);
-          }
-
-          if (type == "digital"){
-            sensorValue = digitalRead(pin);
-          }
-          
-          root[name] = sensorValue;          
-
-          root.printTo((char*)jsonChar, root.measureLength() + 1);
-          clnt->publish(commandOut.c_str(), jsonChar, true);
+          String message = "{name: \"" + name + "\",analogdigital:\"" + type + "\", value:\"" + sensorValue + "\"}";
+          clnt->publish(commandOut.c_str(), (char*)message.c_str(), true);
 
           Serial.print("Moisture sensor data: ");
           Serial.println(sensorValue);          

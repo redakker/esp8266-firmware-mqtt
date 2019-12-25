@@ -10,9 +10,7 @@ class Motion {
     
     // Work variables
     bool pirState = HIGH;
-    int val = LOW;
-    StaticJsonBuffer<500> jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    int val = LOW;    
     char jsonChar[500];
     
   public:    
@@ -27,9 +25,7 @@ class Motion {
       this->commandOut = commandOut;
 
       if (pin > -1){                
-        Serial.println("Motion setup pin ready");
-        root["device"] = eepromhandler->getValueAsString("device", false);
-        root["type"] = "motion";
+        Serial.println("Motion setup pin ready");     
       }
 
       Serial.print("Motion setup pin: ");      
@@ -37,6 +33,7 @@ class Motion {
       
       if (pin > -1){
        pinMode(pin, INPUT);
+       pinMode(2, OUTPUT); // Built in led
        Serial.println("Motion setup ready");
       }
     }
@@ -48,10 +45,8 @@ class Motion {
             if (pirState == LOW) {
               // we have just turned on
               Serial.println("Motion detected!");
-              
-              root["motion"] = "moving";
-              root.printTo((char*)jsonChar, root.measureLength() + 1);
-              clnt->publish(commandOut.c_str(), jsonChar, true);
+              digitalWrite(2, LOW); // Turn on the build in led              
+              clnt->publish(commandOut.c_str(), "moving", true);
               
               // We only want to print on the output change, not state
               pirState = HIGH;
@@ -60,10 +55,8 @@ class Motion {
             if (pirState == HIGH){
               // we have just turned of
               Serial.println("Motion ended!");
-              
-              root["motion"] = "not_moving";
-              root.printTo((char*)jsonChar, root.measureLength() + 1);
-              clnt->publish(commandOut.c_str(), jsonChar, true);
+              digitalWrite(2, HIGH); // Turn off the build in led
+              clnt->publish(commandOut.c_str(), "not_moving", true);
               
               // We only want to print on the output change, not state
               pirState = LOW;

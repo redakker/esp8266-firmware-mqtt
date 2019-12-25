@@ -14,13 +14,14 @@ class WS2812BStrip {
     // Work variables
     CRGB* leds = NULL; // Initial value
     int lednum = 0;
-    String color = "FFFFFF";
+    String color = "FFFFFF"; //default color
     String prevColor = "";
     int brightness = 255;
     int prevBrightness = 0;
     const int MAX_RESULT_NUMBER = 4;
     const char DELIMITER = ',';
     int breathe = 0;
+    int period = 10;
 
     CRGBPalette16 currentPalette;
     TBlendType    currentBlending;
@@ -56,31 +57,37 @@ class WS2812BStrip {
       }
     }
 
+
+    int startMillis = 0;
     void loop() {
       if (pin > -1) {
-        if (color.startsWith("demo")) {
-          static uint8_t startIndex = 0;          
-          startIndex = startIndex + 1; /* motion speed */    
-          
-          ChangePalette(color);
-          FillLEDsFromPaletteColors( startIndex);
-          FastLED.setBrightness(brightness);
-          FastLED.show();
-          FastLED.delay(10);
-        } else {
-          if (color != prevColor || brightness != prevBrightness || breathe > 0) {
-
-            float bright = brightness;
-            if (breathe > 0) {
-              float d = (float) breathe * 1000.0;
-              bright = (exp(sin(millis() / d * PI)) - 0.36787944)*108.0;
-            }
+        int currentMillis = millis();        
+        if (currentMillis - startMillis >= period) {
+          startMillis = currentMillis;
+          if (color.startsWith("demo")) {
+            static uint8_t startIndex = 0;          
+            startIndex = startIndex + 1; /* motion speed */    
             
-            FillLEDsColors();
-            FastLED.setBrightness(bright);
+            ChangePalette(color);
+            FillLEDsFromPaletteColors( startIndex);
+            FastLED.setBrightness(brightness);
             FastLED.show();
-            FastLED.delay(10);
-            prevColor = color;
+            //FastLED.delay(10);
+          } else {
+            if (color != prevColor || brightness != prevBrightness || breathe > 0) {
+  
+              float bright = brightness;
+              if (breathe > 0) {
+                float d = (float) breathe * 1000.0;
+                bright = (exp(sin(millis() / d * PI)) - 0.36787944)*108.0;
+              }
+              
+              FillLEDsColors();
+              FastLED.setBrightness(bright);
+              FastLED.show();
+              //FastLED.delay(10);
+              prevColor = color;
+            }
           }
         }
       }

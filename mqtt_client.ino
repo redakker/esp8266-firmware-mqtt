@@ -24,9 +24,11 @@
 #include "webserver.cpp"
 #include "motion.cpp"
 #include "ws2812B.cpp"
+#include "flipdot.cpp"
 
+//system_soft_wdt_stop();
 
-const char* firmware = "3.78";
+const char* firmware = "3.90";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
@@ -57,6 +59,7 @@ Display display;
 Motion motion(client, eepromhandler);
 WS2812BStrip strip(eepromhandler);
 OnboardWifi onboardWifi(eepromhandler, networks);
+FlipDot flipdot;
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -91,6 +94,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   // ledstrip
   strip.trigger(topic, payload_str);
+
+  //flipdot
+  flipdot.trigger(topic, payload_str);
 
   // PING BEGIN
   /// Every device listen a special topic. If it gets this topic, it sends a messgae about its status (MAC, name etc.)
@@ -175,6 +181,9 @@ void setup() {
 
   // RELAY
   relay.setup(eepromhandler.getValueAsInt("relay", false), commandIn);
+
+  // Flipdot
+  flipdot.setup(eepromhandler.getValueAsInt("flipdot", false), commandIn);
 
   // LED
   led.setup(eepromhandler.getValueAsInt("led", false));
@@ -268,5 +277,3 @@ void loop() {
     client.loop();
   }
 }
-
-
