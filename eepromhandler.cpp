@@ -33,8 +33,7 @@ bool EEPROMHandler::save(){
         
 }
 
-bool EEPROMHandler::updateProperty(String property, String value, boolean saveValues){        
-      load();
+bool EEPROMHandler::updateProperty(String property, String value, boolean saveValues){
       this->jsonDoc[property] = value;
       if (saveValues) {
         return save();

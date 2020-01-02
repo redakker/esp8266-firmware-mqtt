@@ -25,10 +25,11 @@
 #include "motion.cpp"
 #include "ws2812B.cpp"
 #include "flipdot.cpp"
+#include "serialcomm.cpp"
 
 //system_soft_wdt_stop();
 
-const char* firmware = "3.90";
+const char* firmware = "3.95";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";
@@ -60,6 +61,7 @@ Motion motion(client, eepromhandler);
 WS2812BStrip strip(eepromhandler);
 OnboardWifi onboardWifi(eepromhandler, networks);
 FlipDot flipdot;
+SerialComm serial;
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -97,6 +99,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   //flipdot
   flipdot.trigger(topic, payload_str);
+
+  // Soft serial
+  serial.trigger(topic, payload_str);
 
   // PING BEGIN
   /// Every device listen a special topic. If it gets this topic, it sends a messgae about its status (MAC, name etc.)
@@ -208,6 +213,9 @@ void setup() {
   // Led Strip
   strip.setup(eepromhandler.getValueAsInt("ledpin", false), commandIn);
 
+  // MQTT to Soft serial  
+  serial.setup(eepromhandler.getValueAsInt("txpin", false), eepromhandler.getValueAsInt("rxpin", false), commandIn);
+  
   onboardWifi.setup(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
   if (!onboardWifi.isConnected()) {
     Serial.println("Cannot connect to the wifi network. Wifi started as AP mode.");
@@ -268,6 +276,9 @@ void loop() {
 
   // Led Strip
   strip.loop();
+
+  // MQTT to Serial loop
+  serial.loop();
 
   // WebServer
   webserver.loop();

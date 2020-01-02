@@ -67,6 +67,11 @@ digital pin: 14 (not tried)
 
 Release notes:
 
+3.95
+  - Implemented a MQTT -> SoftwareSerial converter
+	- on the web interface there are two new pin configuration for software serial. Tx pin and RX pin. When it is configured, the MQTT messages (payload) will be sent out to the configured softwer serial port.
+	- with this method, you can easily create a network (MQTT) module for example a non-network capable arduino uno/nano etc.
+
 3.90
   - Arduino Json version update
   - fine tune

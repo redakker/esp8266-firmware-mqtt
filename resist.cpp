@@ -1,5 +1,4 @@
 #include <PubSubClient.h>
-#include <ArduinoJson.h>
 #include <DHT.h>;
 #include "eepromhandler.h"
 
@@ -13,8 +12,7 @@ class Resist {
     
     // Work variables
     int sensorValue = 0;
-    unsigned long lastSend;    
-    char jsonChar[500];
+    unsigned long lastSend;
     int interval = 0 ;
     
   public:    

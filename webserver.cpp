@@ -83,9 +83,12 @@ class WebServer {
           String motion = server->arg("motion") == NULL ? "" : server->arg("motion");
           String ledpin = server->arg("ledpin") == NULL ? "" : server->arg("ledpin");
           String lednum = server->arg("lednum") == NULL ? "" : server->arg("lednum");
+          String txpin = server->arg("txpin") == NULL ? "" : server->arg("txpin");
+          String rxpin = server->arg("rxpin") == NULL ? "" : server->arg("rxpin");
 
 
           if (action == "updatesettings") {
+            eepromhandler->load();
 
             eepromhandler-> updateProperty("device", device, false);
             eepromhandler-> updateProperty("room", room, false);
@@ -110,6 +113,8 @@ class WebServer {
             eepromhandler-> updateProperty("motion", motion, false);
             eepromhandler-> updateProperty("ledpin", ledpin, false);
             eepromhandler-> updateProperty("lednum", lednum, false);
+            eepromhandler-> updateProperty("txpin", txpin, false);
+            eepromhandler-> updateProperty("rxpin", rxpin, false);                      
 
             eepromhandler->save();
           }
@@ -341,6 +346,20 @@ class WebServer {
           content += "      </div>\r\n";
           content += "    </div>\r\n";
 
+          content += "    <div class=\"form-group form-inline\">\r\n";
+          content += "      <label for=\"txpin\" class=\"col-sm-3 control-label\">Soft serial TX</label>\r\n";
+          content += "      <div class=\"col-sm-3\">\r\n";
+          content += "        <input name=\"txpin\" type=\"text\" id=\"txpin\" placeholder=\"softserial tx pin\" class=\"form-control\" value=\"";
+          content += eepromhandler->getValueAsString("txpin", false);
+          content += "\">\r\n";
+          content += "      </div>\r\n";
+          content += "      <label for=\"rxpin\" class=\"col-sm-3 control-label\">Soft serial RX</label>\r\n";
+          content += "      <div class=\"col-sm-3\">\r\n";
+          content += "        <input name=\"rxpin\" type=\"text\" id=\"rxpin\" placeholder=\"oftserial rx pin\" class=\"form-control\" value=\"";
+          content += eepromhandler->getValueAsString("rxpin", false);
+          content += "\">\r\n";
+          content += "      </div>\r\n";
+          content += "    </div>\r\n";
 
 
           content += "    <hr />\r\n";
@@ -381,6 +400,7 @@ class WebServer {
           String password = server->arg("password") == NULL ? "" : server->arg("password");
 
           if (action == "updatewifi") {
+            eepromhandler->load();
             eepromhandler-> updateProperty("ssid", ssid, false);
             eepromhandler-> updateProperty("wifipasswd", password, false);
             eepromhandler->save();
@@ -559,6 +579,13 @@ class WebServer {
         content += "          <div style=\"margin-left: 20px;\">Add text topic: <strong>" + commandIn + "text</strong></div>\r\n";
         content += "          <div style=\"margin-left: 20px;\">Payload: <strong>Text message</strong></div>\r\n";
         content += "          <div style=\"margin-left: 20px;\">Example: <strong>Hello world!</strong></div>\r\n";
+        content += "        <hr/>\r\n";
+
+        content += "        <h3>Soft serial topic</h3>   \r\n";
+        content += "          <div style=\"margin-left: 20px;\">Add text topic: <strong>" + commandIn + "serial</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Payload: <strong>Text message</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Example: <strong>Hello world!</strong></div>\r\n";
+        content += "          <div style=\"margin-left: 20px;\">Serial speed is 115200 (hardcoded yet)</div>\r\n";
         content += "        <hr/>\r\n";
         
         content += "      <br/>\r\n";
