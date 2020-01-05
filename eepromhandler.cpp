@@ -66,7 +66,11 @@ String EEPROMHandler::getValueAsString(String name, bool loadbefore) {
       String value = jsonDoc[name.c_str()].as<String>();
       
       //Serial.println("Get value as String.\nName: \"" + name + "\"\nvalue: \"" + value + "\"");      
-      //Serial.println("Return value: " + value + "\n-------------");      
+      //Serial.println("Return value: " + value + "\n-------------");
+      if (!value || value == "null") {
+        value = "";
+      }
+           
       return value;
 }
 
