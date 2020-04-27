@@ -10,15 +10,19 @@ class SerialComm {
     int txPin = -1;
     int rxPin = -1;    
     SoftwareSerial* serial;
+    PubSubClient* clnt;
     
     // Work variables
     String commandIn = "";
+    String commandOut = "";
+    String serialCommand = "";
     
   public:    
-    SerialComm(){              
+    SerialComm(PubSubClient& client){
+      clnt = &client;          
     }
 
-    void setup(int txPin, int rxPin, String commandIn) {
+    void setup(int txPin, int rxPin, String commandIn, String commandOut) {
       this->commandIn = commandIn;
       Serial.println("Soft serial port is set up.");
       Serial.print("tx pin: ");
@@ -36,7 +40,9 @@ class SerialComm {
     }
 
     void loop() {
-            
+      if (this->txPin > -1 && this->rxPin > -1 ){
+       // do nothing now
+      }
     }
 
     void trigger(char* topic, String payload) {
@@ -47,7 +53,7 @@ class SerialComm {
         if (topic_str == (this->commandIn + "/serial")) {
           Serial.println("Message sent out in a configured softserial port:");
           Serial.println(payload);
-          this->serial->println(payload);          
+          this->serial->println(payload);
         }
       }
     }

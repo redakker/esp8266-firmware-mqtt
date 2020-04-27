@@ -61,7 +61,7 @@ Motion motion(client, eepromhandler);
 WS2812BStrip strip(eepromhandler);
 OnboardWifi onboardWifi(eepromhandler, networks);
 FlipDot flipdot;
-SerialComm serial;
+SerialComm serial(client);
 
 // Webserver
 WebServer webserver(server, eepromhandler);
@@ -214,7 +214,7 @@ void setup() {
   strip.setup(eepromhandler.getValueAsInt("ledpin", false), commandIn);
 
   // MQTT to Soft serial  
-  serial.setup(eepromhandler.getValueAsInt("txpin", false), eepromhandler.getValueAsInt("rxpin", false), commandIn);
+  serial.setup(eepromhandler.getValueAsInt("txpin", false), eepromhandler.getValueAsInt("rxpin", false), commandIn, commandOut);
   
   onboardWifi.setup(eepromhandler.getValueAsString("ssid", false), eepromhandler.getValueAsString("wifipasswd", false));
   if (!onboardWifi.isConnected()) {
