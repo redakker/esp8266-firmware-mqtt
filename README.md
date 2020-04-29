@@ -67,7 +67,7 @@ digital pin: 14 (not tried)
 
 Release notes:
 
-3.95
+3.96
   - WIFI AP has a chip ID now to the better identification at (first) setup
 
 3.95
