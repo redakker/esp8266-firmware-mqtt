@@ -29,7 +29,7 @@
 
 //system_soft_wdt_stop();
 
-const char* firmware = "3.95";
+const char* firmware = "3.96";
 String mqtt_server = "";
 String mqtt_user = "";
 String mqtt_password = "";

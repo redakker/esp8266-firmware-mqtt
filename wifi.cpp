@@ -144,19 +144,25 @@ class OnboardWifi {
       Serial.println("");
       delay(100);
 
+      Serial.print("Chip id:");
+      Serial.println(ESP.getChipId());
+      
+
       IPAddress ip(192, 168, 1, 1);
       IPAddress gateway(192, 168, 1, 1);
       IPAddress subnet(255, 255, 255, 0);
       WiFi.softAPConfig(ip, gateway, subnet);
-      const char* ap_ssid = "ESP_nopw_ip_192_168_1_1";
-
-      WiFi.softAP(ap_ssid);
+      // const char* ap_ssid = "ESP_192_168_1_1";
+      String ssid = "ESP_192_168_1_1_" + String(ESP.getChipId());
+      const char* ssid_ap = const_cast<char*>(ssid.c_str());
+  
+      WiFi.softAP(ssid_ap);
       Serial.println("softap ready");
       IPAddress apIP = WiFi.softAPIP();
       Serial.print("IP address: ");
       Serial.println(apIP);
       Serial.print("AP ssid: ");
-      Serial.println(ap_ssid);
+      Serial.println(ssid_ap);
     }
 
 
