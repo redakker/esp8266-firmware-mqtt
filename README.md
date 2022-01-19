@@ -1,3 +1,5 @@
+This project is not maintained anymore.
+
 # esp8266-firmware-mqtt
 A common firmware for ESP8266 chips, to handle mqtt events (send, receive)
 I use it to build a clever home.
